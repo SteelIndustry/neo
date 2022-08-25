@@ -1,0 +1,110 @@
+package trans.main;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+public class Transmission 
+{
+	FileInputStream fis;
+	FileOutputStream fos;
+	//BufferedInputStream bis;
+	//BufferedOutputStream bos;
+	DataInputStream bis;
+	DataOutputStream bos;
+	
+	public Transmission()
+	{
+		this.fis = null;
+		this.fos = null;
+		this.bis = null;
+		this.bos = null;
+	}
+	
+	public void transfer(String source, String destination)
+	{
+		// 목적지에 경로 없는 경우 대비
+		File file = new File(destination);
+		file.mkdirs();
+		search(source, destination);
+	}
+	
+	private void search(String currentPath, String destPath)
+	{
+		File source = new File(currentPath);
+		File[] contents = source.listFiles();
+		
+		for (File file : contents)
+		{
+			// 목적지 파일 경로 설정	
+			String newDestPath = destPath + "\\" + file.getName();
+			/*
+			StringBuilder sb = new StringBuilder(destPath);
+			sb.append("\\").append(file.getName());
+			*/
+			// 디렉토리 or 파일
+			if (file.isDirectory())
+			{
+				
+				//new File(sb.toString()).mkdir();
+				//search(file.getPath(), sb.toString());
+				new File(newDestPath).mkdir();
+				search(file.getPath(), newDestPath);
+				
+			}
+			else
+			{
+				try
+				{
+					// Stream 열기
+					fis = new FileInputStream(file);
+					//bis = new BufferedInputStream(fis);
+					bis = new DataInputStream(bis);
+					//fos = new FileOutputStream(sb.toString());
+					fos = new FileOutputStream(newDestPath);
+					//bos = new BufferedOutputStream(fos);
+					bos = new DataOutputStream(bos);
+					
+					int data = -1;
+					byte[] bytes = new byte[1024];
+					while ((data = bis.read(bytes)) != -1)
+					{
+						bos.write(bytes, 0, data);
+					}
+					bos.flush();
+				} catch (FileNotFoundException e)
+				{
+					System.out.println(e.toString());
+				} catch (IOException e)
+				{
+					System.out.println(e.toString());
+				} finally {
+					close();
+				}
+			}
+		}
+	}
+	
+	// 스트림 닫기
+	public void close()
+	{
+		try
+		{
+			if(bos != null) bos.close();
+			if(fos != null)	fos.close();
+			if(bis != null)	bis.close();
+			if(fis != null)	fis.close();
+		} catch (IOException e)
+		{
+			System.out.println(e.toString());
+		}
+		
+	}
+	
+}
