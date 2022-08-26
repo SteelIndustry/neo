@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.Socket;
 
 public class Receive
 {
@@ -17,86 +18,143 @@ public class Receive
 	FileOutputStream fos;
 	BufferedOutputStream bos;
 	
+	Socket socket;
 	
+	String source;
 	
-	public Receive (InputStream is)
+	public Receive (Socket socket, String sourcePath)
 	{
-		this.is = is;
-		this.bis = null;
-		this.dis = null;
-		this.fos = null;
-		this.bos = null;
+		this.socket = socket;
+		this.source = sourcePath;
+		
+		try
+		{
+			is = socket.getInputStream();
+			
+			bis = new BufferedInputStream(is);
+			dis = new DataInputStream(bis);
+			
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		
 	}
 	
-	public void existDir(String source)
+	public void existDir(String path)
 	{
-		File file = new File(source);
+		File file = new File(path);
+		
 		
 		if (!file.exists())
 			file.mkdirs();
 	}
 	
-	public void copy(String currentPath)
+	public void getInfo()
 	{
-		File file = new File(currentPath);
+		String fileName, path;
+		long fileSize;
 		
-		if (!file.isDirectory())
+		try
 		{
-			try
+			boolean isDir = dis.readBoolean();
+			
+			path = getDirPath(dis.readUTF());
+			
+			File file = new File(path);
+			
+			
+			if (!isDir)
 			{
-				bis = new BufferedInputStream(is);
-				dis = new DataInputStream(bis);
+				fileName = dis.readUTF();
+				fileSize = dis.readLong();
 				
-				fos = new FileOutputStream(file);
-				bos = new BufferedOutputStream(fos);
+				existDir(file.getParent());
 				
+				File newFile = copy(file);
 				
-				String fileName = dis.readUTF();
-				long fileSize = dis.readLong();
-				
-				System.out.println(fileName);
-				System.out.println(fileSize);
-				
-				int data = -1;
-				
-				byte[] bytes = new byte[1024];
-				
-				while ((data = dis.read(bytes)) != -1)
-				{
-					bos.write(bytes, 0, data);
-				}
-				bos.flush();
-				
-				System.out.println("클라이언트와 파일 이름이 같은가? "+fileName.equals(file.getName()));
-				System.out.println("클라이언트와 파일 크기가 같은가? "+ (fileSize==file.length()));
-				
-			} catch (FileNotFoundException e)
-			{
-				
-			} catch (IOException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} finally {
-				close();
+				if (newFile.length() != fileSize)
+					System.out.println("파일 크기 다름");
+				if (!newFile.getName().equals(fileName))
+					System.out.println("파일 이름 다름");
 			}
+			else
+			{
+				existDir(file.getPath());
+			}
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		} finally {
+			closeStream();
 		}
 	}
 	
-	public void close()
+	public String getDirPath(String path)
+	{
+		return new StringBuffer(source).append(path).toString();
+	}
+	
+	public File copy(File file)
+	{
+		File newFile;
+		
+		try
+		{
+			fos = new FileOutputStream(file);
+			bos = new BufferedOutputStream(fos);
+			
+			int data = -1;
+			
+			byte[] bytes = new byte[1024];
+			
+			while ((data = dis.read(bytes)) != -1)
+			{
+				bos.write(bytes, 0, data);
+			}
+			bos.flush();
+			
+		} catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			newFile = file;
+		}
+		return newFile;
+	}
+	
+	
+	public void closeStream()
 	{
 		try
 		{
 			if(dis != null) dis.close();
 			if(bis != null)	bis.close();
-			if(is != null)	is.close();
+			//if(is != null)	is.close();
 			
 			if(bos != null)	bos.close();
 			if(fos != null)	fos.close();
 			
 		} catch (IOException e)
 		{
-			System.out.println(e.toString());
+			e.printStackTrace();
 		}
+	}
+	
+	public void closeSocket()
+	{
+		if (!socket.isClosed())
+		{
+			try
+			{
+				socket.close();
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		socket = null;
 	}
 }
