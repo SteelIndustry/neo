@@ -1,0 +1,85 @@
+package trans.client;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+
+public class ClientSIde
+{
+	public static void main(String[] args)
+	{
+		
+		String sourcePath = "C:/TMTest/source";
+		
+		Transfer transfer = new Transfer(sourcePath);
+		
+		transfer.existDir();
+		
+		transfer.search("");
+		
+		System.out.println("[데이터 보내기 성공]");
+		
+		/*
+		Socket socket = null;
+		
+		try
+		{
+			socket = new Socket();
+			System.out.println("[연결 요청]");
+			socket.connect(new InetSocketAddress("localhost", 10304));
+			System.out.println("[연결 성공]");
+			
+			byte[] bytes = null;
+			String message = null;
+			
+			OutputStream os = socket.getOutputStream();
+			
+			Transfer transfer = new Transfer(os);
+			
+			
+			
+			transfer.setSource(sourcePath);
+			
+			transfer.existDir(sourcePath);
+			
+			transfer.search(sourcePath);
+			
+			os.close();
+			
+			
+			message = "Hello Server";
+			bytes = message.getBytes("UTF-8");
+			os.write(bytes);
+			os.flush();
+			
+			
+			
+			
+			InputStream is = socket.getInputStream();
+			bytes = new byte[100];
+			int readByteCount = is.read(bytes);
+			message = new String(bytes, 0, readByteCount, "UTF-8");
+			System.out.println("[데이터 받기 성공]: " + message);
+			
+			
+			//os.close();
+			//is.close();
+			
+		} catch (Exception e)
+		{}
+		
+		if (!socket.isClosed())
+		{
+			try
+			{
+				socket.close();
+			} catch (IOException e)
+			{
+				// TODO: handle exception
+			}
+		}
+		*/
+	}
+}

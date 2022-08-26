@@ -1,33 +1,17 @@
 package trans.client;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.OutputStream;
 
 public class Transfer
 {
-	OutputStream os;
-	FileInputStream fis;
-	BufferedInputStream bis;
-	BufferedOutputStream bos;
-	DataOutputStream dos;
+	String source;
 	
-	
-	public Transfer (OutputStream os)
+	public Transfer (String sourcePath)
 	{
-		this.os = os;
-		this.fis = null;
-		this.bis = null;
-		this.bos = null;
-		this.dos = null;
+		this.source = sourcePath;
 	}
 	
-	public void existDir(String source)
+	public void existDir()
 	{
 		File file = new File(source);
 		
@@ -35,66 +19,51 @@ public class Transfer
 			file.mkdirs();
 	}
 	
-	public void search(String currentPath)
+	public void search(String path)
 	{
-		File source = new File(currentPath);
+		File source = new File(getCurrentPath(path));
 		File[] contents = source.listFiles();
 		
 		for (File file : contents)
 		{
-			if (!file.isDirectory())
+			if(!file.isDirectory())
 			{
-				try
-				{
-					fis = new FileInputStream(file);
-					bis = new BufferedInputStream(fis);
-					bos = new BufferedOutputStream(os);
-					dos = new DataOutputStream(bos);
-					
-					dos.writeUTF(file.getName());
-					dos.writeLong(file.length());
-					
-					
-					int data = -1;
-					
-					byte[] bytes = new byte[1024];
-					
-					
-					
-					while ((data = bis.read(bytes)) != -1)
-					{
-						dos.write(bytes, 0, data);
-					}
-					dos.flush();
-					
-				} catch (FileNotFoundException e)
-				{
-					
-				} catch (IOException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} finally {
-					close();
-				}
+				OpenSocketStream socket = new OpenSocketStream();
+				
+				socket.connectSocket("localhost", 10304);
+				
+				socket.openStream(file.getPath());
+				
+				socket.send(file, path+"/"+file.getName());
+				
+				socket.closeSocket();
 			}
-			
+			else
+			{
+				String newPath = new StringBuffer(path)
+						.append("/").append(file.getName()).toString();
+				
+				search(newPath);
+			}			
 		}
+		
+		if (contents.length == 0)
+		{
+			OpenSocketStream socket = new OpenSocketStream();
+			
+			socket.connectSocket("localhost", 10304);
+			
+			socket.openStream(source.getPath());
+			
+			socket.send(path);
+			
+			socket.closeSocket();
+		}
+		
+		
 	}
-	
-	public void close()
+	public String getCurrentPath(String pathName)
 	{
-		try
-		{
-			if(dos != null) dos.close();
-			if(bos != null)	bos.close();
-			if(os != null)	os.close();
-			
-			if(bis != null)	bis.close();
-			if(fis != null)	fis.close();
-		} catch (IOException e)
-		{
-			System.out.println(e.toString());
-		}
+		return new StringBuffer(source).append(pathName).toString();		
 	}
 }

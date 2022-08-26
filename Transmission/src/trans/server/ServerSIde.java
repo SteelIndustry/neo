@@ -13,10 +13,13 @@ public class ServerSIde
 	{
 		ServerSocket serverSocket = null;
 		
+		String sourcePath = "C:/TMTest/dest";
+		
 		try
 		{
 			serverSocket = new ServerSocket();
 			serverSocket.bind(new InetSocketAddress("localhost", 10304));
+			
 			
 			while (true)
 			{
@@ -25,10 +28,8 @@ public class ServerSIde
 				InetSocketAddress isa = (InetSocketAddress) socket.getRemoteSocketAddress();
 				System.out.println("[연결 수락함] " + isa.getHostName());
 				
-				byte[] bytes = null;
-				String message = null;
 				
-				InputStream is = socket.getInputStream();
+				//InputStream is = socket.getInputStream();
 				
 				/*
 				bytes = new byte[100];
@@ -38,15 +39,16 @@ public class ServerSIde
 				
 				//System.out.println("[데이터 받기 성공]: " + message);
 				
-				Receive receive = new Receive(is);
-				
-				String destinationPath = "C:/TMTest/dest/sqldeveloper.exe";
+				Receive receive = new Receive(socket, sourcePath);
+				receive.existDir(sourcePath);
 				
 				receive.existDir("C:/TMTest/dest");
 				
-				receive.copy(destinationPath);
+				receive.getInfo();
 				
 				System.out.println("[데이터 받기 성공]");
+				
+				//is.close();
 				
 				/*
 				OutputStream os = socket.getOutputStream();
@@ -60,22 +62,22 @@ public class ServerSIde
 				os.close();
 				
 				*/
-				socket.close();
-				
-				
+				//socket.close();
+				receive.closeSocket();
 			}
-		} catch (Exception e)
-		{
-			// TODO: handle exception
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		if(!serverSocket.isClosed())
-		{
-			try
+		finally {
+			if(!serverSocket.isClosed())
 			{
-				serverSocket.close();
-			} catch (IOException e)
-			{
-				// TODO: handle exception
+				try
+				{
+					serverSocket.close();
+				} catch (IOException e)
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 	}
