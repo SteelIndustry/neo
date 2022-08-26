@@ -1,0 +1,42 @@
+package trans.client;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+
+public class OpenSocketStream
+{
+	Socket socket;
+	
+	OpenSocketStream()
+	{
+		this.socket = new Socket();
+	}
+	
+	public void connectSocket(String ip, int port)
+	{
+		try
+		{
+			socket.connect(new InetSocketAddress(ip, port));
+		} catch (IOException e)
+		{
+			System.out.println(e.toString());
+		}
+	}
+	
+	public void closeSocket()
+	{
+		if (!socket.isClosed())
+		{
+			try
+			{
+				socket.close();
+			} catch (IOException e)
+			{
+				System.out.println(e.toString());
+			}
+		}
+		socket = null;
+	}
+	
+}
