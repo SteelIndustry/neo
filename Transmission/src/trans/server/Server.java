@@ -9,56 +9,72 @@ import java.net.Socket;
 import java.net.URLDecoder;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Server
 {
-	public static String sourcePath, ip;
-	public static int port;
+	private static String sourcePath, ip;
+	private static int port, maxThread;
+	
+	public static ExecutorService executorService;
+	
 	
 	public static void main(String[] args) throws Exception
 	{
-		// 1. 설정 파일 불러오기
+		// 1. 초기 설정
+		// 설정 파일
 		loadServerProperties();
+		
+		// 스레드 풀 시작
+		executorService = Executors.newFixedThreadPool(maxThread);
 		
 		// 2. ServerSocket open
 		ServerSocket serverSocket = new ServerSocket();
-		
-		int count = 0;
-		
 		try
 		{
 			serverSocket.bind(new InetSocketAddress(ip, port));
-			
-			// 3. 연결 대기 및 socket open
-			while (true)
-			{
-				count++;
-				
-				System.out.println("[연결 기다림]");
-				Socket socket = serverSocket.accept();
-				InetSocketAddress isa = (InetSocketAddress) socket.getRemoteSocketAddress();
-				System.out.println("[연결 수락함] " + isa.getHostName());
-				
-				// 4. 작업용 객체 생성 및 수신 작업
-				ServerProcess process = new ServerProcess(socket, sourcePath);
-				
-				System.out.println("[데이터 받기 성공]");
-				
-			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
+			
 			if(!serverSocket.isClosed())
 			{
 				try
 				{
 					serverSocket.close();
-				} catch (IOException e)
+				} catch (IOException e1)
 				{
-					e.printStackTrace();
+					e1.printStackTrace();
 				}
 			}
 		}
+		
+		// 3. 연결 대기 및 socket open
+		Runnable runnable = new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				while(true)
+				{
+					try
+					{
+						System.out.println("[연결 기다림]");
+						Socket socket = serverSocket.accept();
+						InetSocketAddress isa = (InetSocketAddress) socket.getRemoteSocketAddress();
+						System.out.println("[연결 수락함] " + isa.getHostName());
+						
+						// 4. 작업용 객체 생성 및 수신 작업
+						new ServerProcess(executorService, socket, sourcePath);
+						
+						System.out.println("[데이터 받기 성공]");
+					} catch (IOException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+		};	
+		executorService.submit(runnable);
 	}
 	
 	public static void loadServerProperties() throws Exception
@@ -81,5 +97,13 @@ public class Server
 		sourcePath = properties.getProperty("path");
 		port = Integer.parseInt(properties.getProperty("port"));
 		ip = properties.getProperty("ip");
+		if (properties.getProperty("maxThread").equals("default"))
+			maxThread = Runtime.getRuntime().availableProcessors();
+		else
+		{
+			maxThread = (maxThread > Runtime.getRuntime().availableProcessors())
+				? maxThread = Runtime.getRuntime().availableProcessors()
+					: Integer.parseInt(properties.getProperty("maxThread"));
+		}
 	}
 }

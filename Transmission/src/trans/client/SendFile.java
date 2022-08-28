@@ -2,11 +2,13 @@ package trans.client;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -14,6 +16,10 @@ import java.net.Socket;
 public class SendFile
 {
 	private Socket socket;
+	
+	private InputStream is;
+	private BufferedInputStream bis2;
+	private DataInputStream dis;
 	
 	private OutputStream os;
 	private FileInputStream fis;
@@ -53,7 +59,7 @@ public class SendFile
 			
 			bos = new BufferedOutputStream(os);
 			dos = new DataOutputStream(bos);
-			
+						
 		} catch (FileNotFoundException e)
 		{
 			e.printStackTrace();
@@ -81,8 +87,16 @@ public class SendFile
 				{
 					dos.write(bytes, 0, data);
 				}
-				dos.writeUTF("체크");
+				
 				dos.flush();
+				
+				/*
+				InputStream is = socket.getInputStream();
+				BufferedInputStream bis = new BufferedInputStream(is);
+				DataInputStream dis = new DataInputStream(bis);
+				
+				System.out.println(dis.readBoolean());
+				*/
 				
 			}
 			// 빈 디렉토리 보낼 때
@@ -91,18 +105,46 @@ public class SendFile
 				dos.writeBoolean(true);
 				dos.writeUTF(path);
 				
-				dos.writeUTF("체크");
 				dos.flush();
-			}
+			}			
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+			close();
+		}
+		
+		// 정합성 검사 결과 받기
+		try
+		{
+			fis.close();
+			bis.close();
 			
+			bis = null;
+			
+			is = socket.getInputStream();
+			bis2 = new BufferedInputStream(is);
+			dis = new DataInputStream(bis2);
+			
+			System.out.println("계류중");
+			
+			dis.readBoolean();
+			System.out.println(dis.readBoolean());
+			System.out.println("못해");
 			
 		} catch (IOException e)
 		{
 			e.printStackTrace();
-		} finally {
-			
 			close();
 		}
+		
+		close();
+	}
+	
+	private void receiveMsg()
+	{
+		
+			
+		
 	}
 	
 	public void close()
