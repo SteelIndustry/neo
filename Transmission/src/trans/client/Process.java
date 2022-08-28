@@ -1,11 +1,13 @@
 package trans.client;
 
 import java.io.File;
+import java.util.concurrent.ExecutorService;
 
 public class Process
 {
 	private String source, ip;
 	private int port;
+	private ExecutorService executorService;
 	
 	public Process (String sourcePath, String ip, int port)
 	{
@@ -23,7 +25,11 @@ public class Process
 	}
 	
 	// 파일 탐색
-	public void search() { search(""); }
+	public void search(ExecutorService executorService)
+	{ 
+		this.executorService = executorService;
+		search(""); 
+	}
 	
 	// 파일 탐색
 	private void search(String path)
@@ -34,17 +40,33 @@ public class Process
 		// 빈(empty) 폴더(빈 디렉토리) 용 if
 		if (contents.length == 0)
 		{
-			SendFile sendFile = new SendFile(path, ip, port, source);
+			Runnable runnable = new Runnable()
+			{
+				
+				@Override
+				public void run()
+				{
+					SendFile sendFile = new SendFile(path, ip, port, source);
+				}
+			};
 			
-			return;
+			executorService.submit(runnable);
 		}
 		
 		for (File file : contents)
 		{
 			if(!file.isDirectory())
 			{
-				SendFile sendFile = new SendFile(getShortPath(path, file.getName())
-													, ip, port, file);
+				Runnable runnable = new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						SendFile sendFile = new SendFile(getShortPath(path, file.getName())
+								, ip, port, file);
+					}
+				};
+				executorService.submit(runnable);
 			}
 			else
 			{
@@ -53,7 +75,7 @@ public class Process
 				
 				search(newPath);
 			}			
-		}		
+		}
 	}
 	
 	// source: C:/TMTest/source

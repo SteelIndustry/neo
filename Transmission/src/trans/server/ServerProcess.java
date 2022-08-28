@@ -3,17 +3,25 @@ package trans.server;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
 
 public class ServerProcess
 {
 	private Socket socket;
 	private String source;
+	private ExecutorService executorService;
+	
+	OutputStream os;
+	BufferedOutputStream bos2;
+	DataOutputStream dos;
 	
 	InputStream is;
 	BufferedInputStream bis;
@@ -23,8 +31,9 @@ public class ServerProcess
 	
 	int count;
 
-	public ServerProcess (Socket socket, String sourcePath)
+	public ServerProcess (ExecutorService executorService, Socket socket, String sourcePath)
 	{
+		this.executorService = executorService; 
 		this.socket = socket;
 		this.source = sourcePath;
 		
@@ -32,7 +41,17 @@ public class ServerProcess
 		existDir(source);
 		
 		// 파일 수신 과정
-		receiveTask();
+		
+		Runnable runnable = new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				receiveTask();
+			}
+		};
+		this.executorService.submit(runnable);
+		
 	}
 	
 	private void existDir(String path)
@@ -45,7 +64,7 @@ public class ServerProcess
 	
 	private void receiveTask()
 	{
-		
+		System.out.println(Thread.currentThread().getName());
 		// 스트림 open
 		try
 		{
@@ -83,22 +102,58 @@ public class ServerProcess
 				// 전달받은 디렉토리 생성
 				existDir(file.getPath());
 			}
-			System.out.println(file.getPath());
-			System.out.println(dis.readUTF());
 									
 		} catch (IOException e)
 		{
 			e.printStackTrace();
-		} finally {
 			close();
 		}
+		
+		try
+		{
+			fos.close();
+
+			bos.close();
+			
+			bos = null;
+		} catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		sendMsg();
+		
+		close();
 	}
 	
 	public String getAccuratePath(String path)
 	{
 		return new StringBuffer(source).append(path).toString();
 	}
+	
+	private void sendMsg()
+	{
 		
+		try
+		{
+			
+			os = socket.getOutputStream();
+			bos2 = new BufferedOutputStream(os);
+			dos = new DataOutputStream(bos2);
+			
+			System.out.println("생성 완료");
+			
+			dos.writeBoolean(true);
+			dos.writeBoolean(true);
+			System.out.println("보내기 완료");
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+			close();
+		}		
+	}
+	
 	private File copy(File file)
 	{
 		File newFile;
