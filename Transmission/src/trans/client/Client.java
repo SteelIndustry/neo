@@ -1,5 +1,6 @@
 package trans.client;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.URLDecoder;
@@ -9,12 +10,16 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class Client
 {
 	public static String sourcePath, ip;
 	public static int port, maxThread;
 	public static ExecutorService executorService;
+	private static ThreadPoolExecutor threadPoolExecutor;
 	private static ArrayList<String> delList;
 	
 	public static void main(String[] args) throws Exception
@@ -26,7 +31,18 @@ public class Client
 		// 설정 파일
 		loadProperties();
 		
-		executorService = Executors.newFixedThreadPool(5);
+		//executorService = Executors.newFixedThreadPool(5);
+		
+		
+		threadPoolExecutor = new ThreadPoolExecutor(
+			maxThread
+			, Runtime.getRuntime().availableProcessors()
+			, 10L
+			, TimeUnit.SECONDS
+			, new SynchronousQueue<Runnable>()
+		); 
+		
+		executorService = threadPoolExecutor;
 		
 		// 2. 전송용 클래스		
 		Process transfer = new Process(sourcePath, ip, port, delList);
@@ -35,23 +51,25 @@ public class Client
 		transfer.existDir();
 		
 		// 4. 파일 탐색 및 전송
-		Thread thread = new Thread(new Runnable()
+		Runnable task = new Runnable()
 		{
 			@Override
 			public void run()
 			{
 				transfer.search(executorService);
 			}
-		});
+		};		
+		executorService.submit(task);
 		
-		thread.start();
+		int count=threadPoolExecutor.getActiveCount();
 		
-		try
+		while (count != 0)
 		{
-			thread.join();
-		} catch (InterruptedException e)
-		{
+			count = threadPoolExecutor.getActiveCount();
 		}
+		
+		if (!executorService.isShutdown())
+			executorService.shutdown();
 		
 		transfer.delete(sourcePath);
 		
