@@ -1,0 +1,188 @@
+package trans.server;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+
+public class ServerProcess
+{
+	private static final int BUFFER_SIZE=1024;
+	
+	private Socket socket;
+	private String source;
+	private ExecutorService executorService;
+	
+	OutputStream os;
+	DataOutputStream dos;
+	
+	InputStream is;
+	BufferedInputStream bis;
+	DataInputStream dis;
+	FileOutputStream fos;
+	BufferedOutputStream bos;
+	
+	public ServerProcess (ExecutorService executorService, Socket socket, String sourcePath)
+	{
+		this.executorService = executorService; 
+		this.socket = socket;
+		this.source = sourcePath;
+		
+		// 디렉토리 없으면 생성
+		existDir(source);
+		
+		// 파일 수신 과정
+		
+		Runnable runnable = new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				receiveTask();
+			}
+		};
+		this.executorService.submit(runnable);
+		
+	}
+	
+	private void existDir(String path)
+	{
+		File file = new File(path);
+		
+		if (!file.exists())
+			file.mkdirs();
+	}
+	
+	private void receiveTask()
+	{
+		// 스트림 open
+		try
+		{
+			is = socket.getInputStream();
+			bis = new BufferedInputStream(is);
+			dis = new DataInputStream(bis);
+			
+			// 파일 or 디렉토리
+			boolean isDir = dis.readBoolean();
+			File file = new File(getAccuratePath(dis.readUTF()));
+			
+			if (!isDir)
+			{
+				// 디렉토리 없으면 생성
+				existDir(file.getParent());
+				
+				fos = new FileOutputStream(file);
+				bos = new BufferedOutputStream(fos);
+				
+				// 정합성 검사용
+				long fileSize = dis.readLong();
+				
+				// 파일 수신
+				copy(file, fileSize);
+				
+				// 정합성 결과 발신
+				os = socket.getOutputStream();
+				bos = new BufferedOutputStream(os);
+				dos = new DataOutputStream(bos);
+				
+				boolean check = (file.length() != fileSize) ? false : true; 
+				
+				dos.writeBoolean(check); 
+								
+			}
+			else
+			{
+				// 전달받은 디렉토리 생성
+				existDir(file.getPath());
+			}
+									
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		} finally
+		{
+			close();
+		}
+	}
+	
+	public String getAccuratePath(String path)
+	{
+		return new StringBuffer(source).append(path).toString();
+	}
+	
+	private void copy(File file, long fileSize)
+	{
+		try
+		{
+			// 데이터 읽기용 버퍼
+			int data = 0;
+			byte[] bytes = new byte[BUFFER_SIZE];
+			
+			// 파일 바이트 사이즈만큼 read
+			long count = 0;
+			long maxCount = fileSize % BUFFER_SIZE == 0 
+				? fileSize / BUFFER_SIZE 
+				: fileSize / BUFFER_SIZE + 1;
+			
+			while ( count < maxCount)
+			{
+				data = dis.read(bytes);
+				bos.write(bytes, 0, data);		
+			}
+			bos.flush();
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void close()
+	{
+		try
+		{
+			if (dos != null) dos.close();
+			if (os != null) os.close();
+			
+			if(dis != null) dis.close();
+			if(bis != null)	bis.close();
+			if(is != null)	is.close();
+			
+			if(bos != null)	bos.close();
+			if(fos != null)	fos.close();
+			
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		os = null;
+		dos = null;
+		
+		dis = null;
+		bis = null;
+		is = null;
+		bos = null;
+		fos = null;
+		
+		if (!socket.isClosed())
+		{
+			try
+			{
+				socket.close();
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		socket = null;
+	}
+}

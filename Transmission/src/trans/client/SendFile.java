@@ -15,10 +15,11 @@ import java.net.Socket;
 
 public class SendFile
 {
+	private static final int BUFFER_SIZE = 1024;
+	
 	private Socket socket;
 	
 	private InputStream is;
-	private BufferedInputStream bis2;
 	private DataInputStream dis;
 	
 	private OutputStream os;
@@ -30,6 +31,7 @@ public class SendFile
 	private String path, ip;
 	private int port;
 	private File file;
+	private boolean deleteCheck;
 	
 	public SendFile(String path, String ip, int port, File file)
 	{
@@ -37,11 +39,10 @@ public class SendFile
 		this.ip = ip;
 		this.port = port;
 		this.file = file;
-		
-		sendTask();
+		this.deleteCheck = false;
 	}
 	
-	private void sendTask()
+	public boolean sendTask()
 	{
 		// 소켓, 스트림 open
 		socket = new Socket();
@@ -74,30 +75,30 @@ public class SendFile
 		{
 			if (!file.isDirectory())
 			{
+				// 디렉토리인지 파일인지
 				dos.writeBoolean(false);
 				
+				// 파일 path
 				dos.writeUTF(path);
-				dos.writeUTF(file.getName());
+				
+				// 파일 사이즈
 				dos.writeLong(file.length());
 				
+				// 파일 바이트 전송
 				int data = -1;
-				byte[] bytes = new byte[1024];
-				
-				while ((data = bis.read(bytes)) != -1)
+				byte[] bytes = new byte[BUFFER_SIZE];	
+				while ((data = bis.read(bytes)) > 0)
 				{
 					dos.write(bytes, 0, data);
 				}
-				
 				dos.flush();
 				
-				/*
-				InputStream is = socket.getInputStream();
-				BufferedInputStream bis = new BufferedInputStream(is);
-				DataInputStream dis = new DataInputStream(bis);
+				// 정합성 결과 수신
+				is = socket.getInputStream();
+				bis = new BufferedInputStream(is);
+				dis = new DataInputStream(bis);
 				
-				System.out.println(dis.readBoolean());
-				*/
-				
+				deleteCheck = dis.readBoolean();					
 			}
 			// 빈 디렉토리 보낼 때
 			else
@@ -106,60 +107,40 @@ public class SendFile
 				dos.writeUTF(path);
 				
 				dos.flush();
+				
+				deleteCheck = true;
 			}			
 		} catch (IOException e)
 		{
 			e.printStackTrace();
+		} finally {
 			close();
 		}
-		
-		// 정합성 검사 결과 받기
-		try
-		{
-			fis.close();
-			bis.close();
-			
-			bis = null;
-			
-			is = socket.getInputStream();
-			bis2 = new BufferedInputStream(is);
-			dis = new DataInputStream(bis2);
-			
-			System.out.println("계류중");
-			
-			dis.readBoolean();
-			System.out.println(dis.readBoolean());
-			System.out.println("못해");
-			
-		} catch (IOException e)
-		{
-			e.printStackTrace();
-			close();
-		}
-		
-		close();
-	}
-	
-	private void receiveMsg()
-	{
-		
-			
-		
+		return deleteCheck;
 	}
 	
 	public void close()
 	{
 		try
 		{
+			if (dis != null) dis.close();
+			if (is != null) is.close();
+			
+			
 			if(dos != null) dos.close();
 			if(bos != null)	bos.close();
 			if(os != null) os.close();			
 			if(bis != null)	bis.close();
 			if(fis != null)	fis.close();
+			
+			
 		} catch (IOException e)
 		{
 			e.printStackTrace();
 		}
+		is = null;
+		dis = null;
+		
 		dos = null;
 		bos = null;
 		os = null;

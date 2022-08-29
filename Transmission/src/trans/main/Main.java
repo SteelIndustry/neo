@@ -9,9 +9,14 @@ public class Main
 		long start, end;
 		start = System.currentTimeMillis();
 		
-		File file = new File("C:/TMTest/dest/asgw");
+		long a = 1;
+		a++;
+		System.out.println(a);
 		
-		System.out.println(file.isDirectory());
+		
+		//File file = new File("C:/TMTest/dest/asgw");
+		
+		//System.out.println(file.isDirectory());
 		
 		/*		
 		// 원본 디렉토리
