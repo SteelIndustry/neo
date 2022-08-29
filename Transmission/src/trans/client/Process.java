@@ -50,12 +50,6 @@ public class Process
 				public void run()
 				{
 					new SendFile(path, ip, port, source).sendTask();
-					/*
-					if (source.delete())
-					{
-						System.out.println("빈 폴더 삭제");
-					}
-					*/
 				}
 			};
 			executorService.submit(task);
@@ -96,20 +90,6 @@ public class Process
 				search(newPath);
 			}			
 		}
-		
-		/*
-		// 빈 폴더 정리
-		if (source.exists())
-		{
-			if (source.list().length == 0)
-			{
-				if (source.delete())
-				{
-					System.out.println("빈 폴더 삭제");
-				}
-			}
-		}
-		*/
 	}
 	
 	// 빈 폴더 정리
