@@ -49,7 +49,7 @@ public class Server
 		}
 		
 		// 3. 연결 대기 및 socket open
-		Runnable runnable = new Runnable()
+		Runnable task = new Runnable()
 		{
 			@Override
 			public void run()
@@ -74,7 +74,7 @@ public class Server
 				}
 			}
 		};	
-		executorService.submit(runnable);
+		executorService.submit(task);
 	}
 	
 	public static void loadServerProperties() throws Exception

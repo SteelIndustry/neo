@@ -15,12 +15,13 @@ import java.util.concurrent.ExecutorService;
 
 public class ServerProcess
 {
+	private static final int BUFFER_SIZE=1024;
+	
 	private Socket socket;
 	private String source;
 	private ExecutorService executorService;
 	
 	OutputStream os;
-	BufferedOutputStream bos2;
 	DataOutputStream dos;
 	
 	InputStream is;
@@ -29,8 +30,6 @@ public class ServerProcess
 	FileOutputStream fos;
 	BufferedOutputStream bos;
 	
-	int count;
-
 	public ServerProcess (ExecutorService executorService, Socket socket, String sourcePath)
 	{
 		this.executorService = executorService; 
@@ -64,7 +63,6 @@ public class ServerProcess
 	
 	private void receiveTask()
 	{
-		System.out.println(Thread.currentThread().getName());
 		// 스트림 open
 		try
 		{
@@ -85,17 +83,19 @@ public class ServerProcess
 				bos = new BufferedOutputStream(fos);
 				
 				// 정합성 검사용
-				String fileName = dis.readUTF();
 				long fileSize = dis.readLong();
 				
 				// 파일 수신
-				File receivedFile = copy(file);
+				copy(file, fileSize);
 				
-				if (!receivedFile.getName().equals(fileName))
-					System.out.println("파일 이름 다름");
-				if (receivedFile.length() != fileSize)
-					System.out.println("파일 크기 다름");
+				// 정합성 결과 발신
+				os = socket.getOutputStream();
+				bos = new BufferedOutputStream(os);
+				dos = new DataOutputStream(bos);
 				
+				boolean check = (file.length() != fileSize) ? false : true; 
+				dos.writeBoolean(check); 
+								
 			}
 			else
 			{
@@ -106,25 +106,10 @@ public class ServerProcess
 		} catch (IOException e)
 		{
 			e.printStackTrace();
+		} finally
+		{
 			close();
 		}
-		
-		try
-		{
-			fos.close();
-
-			bos.close();
-			
-			bos = null;
-		} catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		sendMsg();
-		
-		close();
 	}
 	
 	public String getAccuratePath(String path)
@@ -132,39 +117,23 @@ public class ServerProcess
 		return new StringBuffer(source).append(path).toString();
 	}
 	
-	private void sendMsg()
+	private void copy(File file, long fileSize)
 	{
-		
 		try
 		{
+			// 데이터 읽기용 버퍼
+			int data = 0;
+			byte[] bytes = new byte[BUFFER_SIZE];
 			
-			os = socket.getOutputStream();
-			bos2 = new BufferedOutputStream(os);
-			dos = new DataOutputStream(bos2);
+			// 파일 바이트 사이즈만큼 read
+			long count = 0;
+			long maxCount = fileSize % BUFFER_SIZE == 0 
+				? fileSize / BUFFER_SIZE 
+				: fileSize / BUFFER_SIZE + 1;
 			
-			System.out.println("생성 완료");
-			
-			dos.writeBoolean(true);
-			dos.writeBoolean(true);
-			System.out.println("보내기 완료");
-		} catch (IOException e)
-		{
-			e.printStackTrace();
-			close();
-		}		
-	}
-	
-	private File copy(File file)
-	{
-		File newFile;
-		
-		try
-		{
-			int data = -1;
-			byte[] bytes = new byte[1024];
-			
-			while ((data = dis.read(bytes)) != -1)
+			while ( count++ < maxCount)
 			{
+				data = dis.read(bytes);
 				bos.write(bytes, 0, data);
 			}
 			bos.flush();
@@ -173,17 +142,16 @@ public class ServerProcess
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
-			newFile = file;
 		}
-		
-		return newFile;
 	}
 	
 	public void close()
 	{
 		try
 		{
+			if (dos != null) dos.close();
+			if (os != null) os.close();
+			
 			if(dis != null) dis.close();
 			if(bis != null)	bis.close();
 			if(is != null)	is.close();
@@ -195,6 +163,9 @@ public class ServerProcess
 		{
 			e.printStackTrace();
 		}
+		os = null;
+		dos = null;
+		
 		dis = null;
 		bis = null;
 		is = null;

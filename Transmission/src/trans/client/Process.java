@@ -1,6 +1,7 @@
 package trans.client;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 
 public class Process
@@ -8,12 +9,14 @@ public class Process
 	private String source, ip;
 	private int port;
 	private ExecutorService executorService;
+	private ArrayList<String> delList;
 	
-	public Process (String sourcePath, String ip, int port)
+	public Process (String sourcePath, String ip, int port, ArrayList<String> delList)
 	{
 		this.source = sourcePath;
 		this.ip = ip;
 		this.port = port;
+		this.delList = delList;
 	}
 	
 	public void existDir()
@@ -40,34 +43,51 @@ public class Process
 		// 빈(empty) 폴더(빈 디렉토리) 용 if
 		if (contents.length == 0)
 		{
-			Runnable runnable = new Runnable()
+			// 빈 폴더 이름 전달 후 삭제
+			Runnable task = new Runnable()
 			{
-				
 				@Override
 				public void run()
 				{
-					SendFile sendFile = new SendFile(path, ip, port, source);
+					new SendFile(path, ip, port, source).sendTask();
+					/*
+					if (source.delete())
+					{
+						System.out.println("빈 폴더 삭제");
+					}
+					*/
 				}
 			};
+			executorService.submit(task);
 			
-			executorService.submit(runnable);
+			return;
 		}
 		
 		for (File file : contents)
 		{
+			// 파일 일 때
 			if(!file.isDirectory())
 			{
-				Runnable runnable = new Runnable()
+				Runnable task = new Runnable()
 				{
 					@Override
 					public void run()
 					{
-						SendFile sendFile = new SendFile(getShortPath(path, file.getName())
-								, ip, port, file);
+						// 파일 전송 후 성공했으면 삭제
+						boolean check = false;
+						check = new SendFile(getShortPath(path, file.getName())
+									, ip, port, file).sendTask();
+						if (check)
+						{
+							//delList.add(file.getPath());
+							if(file.delete())
+								System.out.println("삭제 성공");
+						}
 					}
 				};
-				executorService.submit(runnable);
+				executorService.submit(task);
 			}
+			// 폴더 일 때, 폴더 진입해서 새로운 search
 			else
 			{
 				String newPath = new StringBuffer(path)
@@ -75,6 +95,47 @@ public class Process
 				
 				search(newPath);
 			}			
+		}
+		
+		/*
+		// 빈 폴더 정리
+		if (source.exists())
+		{
+			if (source.list().length == 0)
+			{
+				if (source.delete())
+				{
+					System.out.println("빈 폴더 삭제");
+				}
+			}
+		}
+		*/
+	}
+	
+	// 빈 폴더 정리
+	public void delete(String path)
+	{
+		File sourceFolder = new File(path);
+		File[] contents = sourceFolder.listFiles();
+				
+		for (File file : contents)
+		{
+			if (file.exists())
+			{
+				if ( file.isDirectory() )
+					delete(file.getPath());
+			}			
+		}
+		
+		if (contents.length == 0)
+		{
+			if (sourceFolder.exists())
+			{
+				if (sourceFolder.delete())
+				{
+					System.out.println("빈 폴더 삭제");
+				}
+			}
 		}
 	}
 	
