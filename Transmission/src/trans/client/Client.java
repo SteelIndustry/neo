@@ -1,115 +1,90 @@
 package trans.client;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Properties;
-import java.util.concurrent.Callable;
+import java.net.InetAddress;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
+
 
 public class Client
 {
-	public static String sourcePath, ip;
-	public static int port, maxThread;
-	public static ExecutorService executorService;
+	private static ExecutorService executorService;
 	private static ThreadPoolExecutor threadPoolExecutor;
-	private static ArrayList<String> delList;
+	private static Logger logger;
 	
 	public static void main(String[] args) throws Exception
 	{
-		long start, end;
-		start = System.currentTimeMillis();
+		//long start, end;
+		//start = System.currentTimeMillis();
 		
 		// 1. 초기 설정
-		// 설정 파일
-		loadProperties();
+		// 설정 파일, 로그 설정 파일
+		Setting setting = new Setting();
+		setting.loadProperties();
+		setting.loadLogProperties();
 		
-		//executorService = Executors.newFixedThreadPool(5);
+		// Logger 객체
+		logger = setting.getLogger();
 		
+		// 클라이언트 시작 알림
+		StringBuffer sb = new StringBuffer();
+		InetAddress local = InetAddress.getLocalHost();
+		sb.append("client(");		
+		sb.append(local.getHostAddress());
+		sb.append(") starts");
+		logger.info(sb.toString());
 		
+		// 스레드 풀 설정
 		threadPoolExecutor = new ThreadPoolExecutor(
-			maxThread
+			setting.getMaxThread()
 			, Runtime.getRuntime().availableProcessors()
 			, 10L
 			, TimeUnit.SECONDS
 			, new SynchronousQueue<Runnable>()
 		); 
-		
 		executorService = threadPoolExecutor;
 		
-		// 2. 전송용 클래스		
-		Process transfer = new Process(sourcePath, ip, port, delList);
+		// 2. 전송 작업용 클래스		
+		SendingTask totalTask = new SendingTask(setting.getSourcePath()
+				, setting.getIp(), setting.getPort(), logger, executorService);
 		
 		// 3. 디렉토리 유무 탐색
-		transfer.existDir();
+		totalTask.existDir();
 		
 		// 4. 파일 탐색 및 전송
-		Runnable task = new Runnable()
+		while(true)
 		{
-			@Override
-			public void run()
+			executorService.submit(new Runnable()
 			{
-				transfer.search(executorService);
-			}
-		};		
-		executorService.submit(task);
-		
-		int count=threadPoolExecutor.getActiveCount();
-		
-		while (count != 0)
-		{
-			count = threadPoolExecutor.getActiveCount();
-		}
-		
-		if (!executorService.isShutdown())
-			executorService.shutdown();
-		
-		transfer.delete(sourcePath);
-		
-		System.out.println("탈출");
-		
-		System.out.println("[데이터 보내기 성공]");
-		
-		end = System.currentTimeMillis();
-		System.out.println(end-start+"ms");
-	}
-	
-	public static void loadProperties() throws Exception
-	{
-		String propertiesPath = Client.class.getResource("client.properties").getPath();
-		Properties properties = new Properties();
-		
-		try
-		{
-			propertiesPath = URLDecoder.decode(propertiesPath, "utf-8");
-			properties.load(new FileInputStream(propertiesPath));
+				@Override
+				public void run()
+				{
+					logger.info("탐색 및 전송 작업 시작");
+					totalTask.searchAndSend();
+				}
+			});
 			
-		} catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
-			System.out.println("설정 파일 오류");
-			throw new Exception();
+			// 우연한 종료를 막기 위한 안전장치
+			Thread.sleep(2000);
+			
+			// 활동 중인 쓰레드가 중지될 때까지 대기
+			int count = threadPoolExecutor.getActiveCount();
+			while (count != 0)
+			{
+				count = threadPoolExecutor.getActiveCount();
+			}
+			
+			logger.info("탐색 및 전송 작업 끝");
+			
+			// 5. 빈 폴더 모두 삭제
+			totalTask.delete();
+			logger.info("빈 폴더 삭제");
+			
+			Thread.sleep(10000);
 		}
-		
-		sourcePath = properties.getProperty("path");
-		port = Integer.parseInt(properties.getProperty("port"));
-		ip = properties.getProperty("ip");
-		if (properties.getProperty("maxThread").equals("default"))
-			maxThread = 3;
-		else
-		{
-			maxThread = (maxThread > Runtime.getRuntime().availableProcessors())
-				? maxThread = Runtime.getRuntime().availableProcessors()
-					: Integer.parseInt(properties.getProperty("maxThread"));
-		}
-		
-		delList = new ArrayList<String>();
+		//end = System.currentTimeMillis();
+		//System.out.println(end-start+"ms");
 	}
 }

@@ -1,0 +1,117 @@
+package trans.server;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.URLDecoder;
+import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Logger;
+
+public class Server
+{
+	private static ExecutorService executorService;
+	private static Logger logger;
+	
+	
+	public static void main(String[] args) throws Exception
+	{
+		// 1. 초기 설정
+		// 설정 파일, 로그 설정 파일
+		Setting setting = new Setting();
+		setting.loadProperties();
+		setting.loadLogProperties();
+		
+		// Logger 객체
+		logger = setting.getLogger();
+		
+		// 스레드 풀 설정
+		executorService = Executors.newFixedThreadPool(setting.getMaxThread());
+		
+		// 2. ServerSocket open
+		ServerSocket serverSocket = new ServerSocket();
+		try
+		{
+			serverSocket.bind(new InetSocketAddress(setting.getIp(), setting.getPort()));
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+			
+			if (serverSocket != null)
+			{
+				if(!serverSocket.isClosed())
+				{
+					try
+					{
+						serverSocket.close();
+					} catch (IOException e1)
+					{
+						e1.printStackTrace();
+					}
+				}
+			}
+		}
+		
+		// 3. 연결 대기 및 socket open
+		while(true)
+		{
+			try
+			{
+				System.out.println("[연결 기다림]");
+				Socket socket = serverSocket.accept();
+				InetSocketAddress isa = (InetSocketAddress) socket.getRemoteSocketAddress();
+				System.out.println("[연결 수락함] " + isa.getHostName());
+				
+				// 4. 작업용 객체 생성 및 수신 작업
+				new ServerProcess(executorService, socket, setting.getSourcePath());
+				
+				System.out.println("[데이터 받기 성공]");
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	/*
+	public static void loadServerProperties() throws Exception
+	{
+		String propertiesPath = Server.class.getResource("server.properties").getPath();
+		Properties properties = new Properties();
+		
+		try
+		{
+			propertiesPath = URLDecoder.decode(propertiesPath, "utf-8");
+			properties.load(new FileInputStream(propertiesPath));
+			
+		} catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+			System.out.println("설정 파일 오류");
+			throw new Exception();
+		}
+		
+		sourcePath = properties.getProperty("path");
+		port = Integer.parseInt(properties.getProperty("port"));
+		ip = properties.getProperty("ip");
+		if (properties.getProperty("maxThread").equals("default"))
+			maxThread = Runtime.getRuntime().availableProcessors();
+		else
+		{
+			maxThread = (maxThread > Runtime.getRuntime().availableProcessors())
+				? maxThread = Runtime.getRuntime().availableProcessors()
+					: Integer.parseInt(properties.getProperty("maxThread"));
+		}
+		
+		checkValidation();
+	}
+	
+	private static void checkValidation()
+	{
+		System.out.println("원본 디렉토리, 포트 번호, ip 유효성 검사 하는 곳");
+	}
+	*/
+}

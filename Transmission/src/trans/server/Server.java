@@ -1,109 +1,89 @@
 package trans.server;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.URLDecoder;
-import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Logger;
 
 public class Server
 {
-	private static String sourcePath, ip;
-	private static int port, maxThread;
-	
-	public static ExecutorService executorService;
-	
+	private static ExecutorService executorService;
+	private static Logger logger;
 	
 	public static void main(String[] args) throws Exception
 	{
 		// 1. 초기 설정
-		// 설정 파일
-		loadServerProperties();
+		// 설정 파일, 로그 설정 파일
+		Setting setting = new Setting();
+		setting.loadProperties();
+		setting.loadLogProperties();
 		
-		// 스레드 풀 시작
-		executorService = Executors.newFixedThreadPool(maxThread);
+		// Logger 객체
+		logger = setting.getLogger();
+		
+		// 서버 시작 알림
+		logger.info("Server start");
+		
+		// 스레드 풀 설정
+		executorService = Executors.newFixedThreadPool(setting.getMaxThread());
 		
 		// 2. ServerSocket open
 		ServerSocket serverSocket = new ServerSocket();
 		try
 		{
-			serverSocket.bind(new InetSocketAddress(ip, port));
+			serverSocket.bind(new InetSocketAddress(setting.getIp(), setting.getPort()));
+			
+			// 3. 연결 대기 및 socket open
+			while(true)
+			{
+				System.out.println("[연결 기다림]");
+				Socket socket = serverSocket.accept();
+				InetSocketAddress isa = (InetSocketAddress) socket.getRemoteSocketAddress();
+				
+				StringBuffer sb = new StringBuffer("[연결 수락함] ");
+				sb.append(isa.getHostName());
+				logger.info(sb.toString());
+				
+				// 4. 작업용 객체 생성
+				ReceivingFile rf = new ReceivingFile(socket, setting.getSourcePath(), logger);
+				
+				// 5. 저장 디렉토리 존재 유무. 없으면 디렉토리 생성
+				rf.existDir(setting.getSourcePath());
+				
+				// 6. 파일 수신 작업
+				executorService.submit(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						rf.receiveFile();
+					}
+				});
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			
-			if(!serverSocket.isClosed())
+			logger.severe(e.getMessage());
+			
+			if (serverSocket != null)
 			{
-				try
-				{
-					serverSocket.close();
-				} catch (IOException e1)
-				{
-					e1.printStackTrace();
-				}
-			}
-		}
-		
-		// 3. 연결 대기 및 socket open
-		Runnable task = new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				while(true)
+				if(!serverSocket.isClosed())
 				{
 					try
 					{
-						System.out.println("[연결 기다림]");
-						Socket socket = serverSocket.accept();
-						InetSocketAddress isa = (InetSocketAddress) socket.getRemoteSocketAddress();
-						System.out.println("[연결 수락함] " + isa.getHostName());
-						
-						// 4. 작업용 객체 생성 및 수신 작업
-						new ServerProcess(executorService, socket, sourcePath);
-						
-						System.out.println("[데이터 받기 성공]");
-					} catch (IOException e)
+						serverSocket.close();
+					} catch (IOException e1)
 					{
-						e.printStackTrace();
+						e1.printStackTrace();
+						logger.info(e1.getMessage());
 					}
 				}
 			}
-		};	
-		executorService.submit(task);
-	}
-	
-	public static void loadServerProperties() throws Exception
-	{
-		String propertiesPath = Server.class.getResource("server.properties").getPath();
-		Properties properties = new Properties();
-		
-		try
-		{
-			propertiesPath = URLDecoder.decode(propertiesPath, "utf-8");
-			properties.load(new FileInputStream(propertiesPath));
 			
-		} catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
-			System.out.println("설정 파일 오류");
-			throw new Exception();
-		}
-		
-		sourcePath = properties.getProperty("path");
-		port = Integer.parseInt(properties.getProperty("port"));
-		ip = properties.getProperty("ip");
-		if (properties.getProperty("maxThread").equals("default"))
-			maxThread = Runtime.getRuntime().availableProcessors();
-		else
-		{
-			maxThread = (maxThread > Runtime.getRuntime().availableProcessors())
-				? maxThread = Runtime.getRuntime().availableProcessors()
-					: Integer.parseInt(properties.getProperty("maxThread"));
+			logger.info("server ends");
 		}
 	}
 }
