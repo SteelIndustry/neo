@@ -1,0 +1,76 @@
+package trans.client;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
+
+
+public class Client
+{
+	private static ExecutorService executorService;
+	private static ThreadPoolExecutor threadPoolExecutor;
+	private static Logger logger;
+	
+	public static void main(String[] args) throws Exception
+	{
+		//long start, end;
+		//start = System.currentTimeMillis();
+		
+		// 1. 초기 설정
+		// 설정 파일, 로그 설정 파일
+		Setting setting = new Setting();
+		setting.loadProperties();
+		setting.loadLogProperties();
+		
+		// Logger 객체
+		logger = setting.getLogger();
+		
+		// 스레드 풀 설정
+		threadPoolExecutor = new ThreadPoolExecutor(
+			setting.getMaxThread()
+			, Runtime.getRuntime().availableProcessors()
+			, 10L
+			, TimeUnit.SECONDS
+			, new SynchronousQueue<Runnable>()
+		); 
+		executorService = threadPoolExecutor;
+		
+		// 2. 전송 작업용 클래스		
+		Procedure procedure = new Procedure(setting.getSourcePath(), setting.getIp(), setting.getPort(), logger);
+		
+		// 3. 디렉토리 유무 탐색
+		procedure.existDir();
+		
+		// 4. 파일 탐색 및 전송
+		executorService.submit(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				procedure.search(executorService);
+			}
+		});
+		
+		// 우연한 종료를 막기 위한 안전장치
+		Thread.sleep(2000);
+		
+		int count = threadPoolExecutor.getActiveCount();
+		
+		while (count != 0)
+		{
+			count = threadPoolExecutor.getActiveCount();
+		}
+		
+		if (!executorService.isShutdown())
+			executorService.shutdown();
+		
+		procedure.delete();
+		
+		System.out.println("[데이터 보내기 loop 종료]");
+		
+		//end = System.currentTimeMillis();
+		//System.out.println(end-start+"ms");
+	}
+}

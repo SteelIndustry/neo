@@ -1,0 +1,25 @@
+package trans.client;
+
+import java.util.logging.Formatter;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
+
+public class Log extends Formatter
+{
+	public String getHead(Handler h)
+	{
+		return "START LOG\n";
+	}
+	
+	@Override
+	public String format(LogRecord rec)
+	{
+		StringBuffer buf = new StringBuffer(1000);
+		
+		//buf.append()
+		
+		return null;
+	}
+	
+}

@@ -1,0 +1,38 @@
+package trans.client;
+
+import java.io.IOException;
+import java.util.logging.FileHandler;
+import java.util.logging.Formatter;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+
+public class Log
+{
+	private Logger logger;
+	private FileHandler fileHandler;
+	
+	Log()
+	{
+		logger = Logger.getLogger("client");
+	}
+	
+	public void setLog(String path)
+	{
+		try
+		{
+			fileHandler = new FileHandler(path, true);
+			logger.addHandler(fileHandler);
+			SimpleFormatter simpleFormatter = new SimpleFormatter();
+			fileHandler.setFormatter(simpleFormatter);
+			
+		} catch (SecurityException e)
+		{
+			e.printStackTrace();
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+}

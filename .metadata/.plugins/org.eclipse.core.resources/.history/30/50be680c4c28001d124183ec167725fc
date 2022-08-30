@@ -1,0 +1,92 @@
+package trans.client;
+
+import java.net.InetAddress;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
+
+
+public class Client
+{
+	private static ExecutorService executorService;
+	private static ThreadPoolExecutor threadPoolExecutor;
+	private static Logger logger;
+	
+	public static void main(String[] args) throws Exception
+	{
+		//long start, end;
+		//start = System.currentTimeMillis();
+		
+		// 1. 초기 설정
+		// 설정 파일, 로그 설정 파일
+		Setting setting = new Setting();
+		setting.loadProperties();
+		setting.loadLogProperties();
+		
+		// Logger 객체
+		logger = setting.getLogger();
+		
+		// 클라이언트 시작 알림
+		StringBuffer sb = new StringBuffer();
+		InetAddress local = InetAddress.getLocalHost();
+		sb.append("client(");		
+		sb.append(local.getHostAddress());
+		sb.append(") starts");
+		logger.info(sb.toString());
+		
+		// 스레드 풀 설정
+		threadPoolExecutor = new ThreadPoolExecutor(
+			setting.getMaxThread()
+			, Runtime.getRuntime().availableProcessors()
+			, 10L
+			, TimeUnit.SECONDS
+			, new SynchronousQueue<Runnable>()
+		); 
+		executorService = threadPoolExecutor;
+		
+		// 2. 전송 작업용 클래스		
+		TotalSendingTask totalTask = new TotalSendingTask(setting.getSourcePath()
+				, setting.getIp(), setting.getPort(), logger, executorService);
+		
+		// 3. 디렉토리 유무 탐색
+		totalTask.existDir();
+		
+		// 4. 파일 탐색 및 전송
+		while(true)
+		{
+			executorService.submit(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					logger.info("Start searching and sending task");
+					totalTask.searchAndSend();
+				}
+			});
+			
+			// 우연한 종료를 막기 위한 안전장치
+			Thread.sleep(2000);
+			
+			// 활동 중인 쓰레드가 중지될 때까지 대기
+			int count = threadPoolExecutor.getActiveCount();
+			while (count != 0)
+			{
+				count = threadPoolExecutor.getActiveCount();
+			}
+			
+			logger.info("Searching and sending task finished");
+			
+			// 5. 빈 폴더 모두 삭제
+			totalTask.delete();
+			logger.info("Empty folder deleted from source folder");
+			
+			System.out.println("[데이터 보내기 종료]");
+			
+			Thread.sleep(10000);
+		}
+		//end = System.currentTimeMillis();
+		//System.out.println(end-start+"ms");
+	}
+}
