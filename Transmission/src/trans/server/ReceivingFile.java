@@ -18,22 +18,22 @@ public class ReceivingFile
 	private static final int BUFFER_SIZE=1024;
 	
 	private Socket socket;
-	private String source;
+	private String repository;
 	private Logger logger;
 	
-	OutputStream os;
-	DataOutputStream dos;
+	private OutputStream os;
+	private DataOutputStream dos;
 	
-	InputStream is;
-	BufferedInputStream bis;
-	DataInputStream dis;
-	FileOutputStream fos;
-	BufferedOutputStream bos;
+	private InputStream is;
+	private BufferedInputStream bis;
+	private DataInputStream dis;
+	private FileOutputStream fos;
+	private BufferedOutputStream bos;
 	
-	public ReceivingFile (Socket socket, String sourcePath, Logger logger)
+	public ReceivingFile (Socket socket, String repositoryPath, Logger logger)
 	{
 		this.socket = socket;
-		this.source = sourcePath;
+		this.repository = repositoryPath;
 		this.logger = logger;
 	}
 	
@@ -122,7 +122,7 @@ public class ReceivingFile
 	
 	public String getAccuratePath(String path)
 	{
-		return new StringBuffer(source).append(path).toString();
+		return new StringBuffer(repository).append(path).toString();
 	}
 	
 	private void copy(File file, long fileSize)

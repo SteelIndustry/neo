@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 
 public class Setting
 {
-	private String sourcePath, ip;
+	private String path, ip;
 	private int port, maxThread;
 	private Logger logger;
 	
@@ -30,7 +30,7 @@ public class Setting
 			throw new Exception();
 		}
 		
-		sourcePath = properties.getProperty("path");
+		path = properties.getProperty("path");
 		port = Integer.parseInt(properties.getProperty("port"));
 		ip = properties.getProperty("ip");
 		if (properties.getProperty("maxThread").equals("default"))
@@ -104,9 +104,9 @@ public class Setting
 		System.out.println("원본 디렉토리, 포트 번호, ip 유효성 검사 하는 곳");
 	}
 	
-	public String getSourcePath()
+	public String getPath()
 	{
-		return sourcePath;
+		return path;
 	}
 
 	public String getIp()

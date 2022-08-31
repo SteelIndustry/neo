@@ -47,11 +47,11 @@ public class Client
 		executorService = threadPoolExecutor;
 		
 		// 2. 전송 작업용 클래스		
-		SendingTask sendingTask = new SendingTask(setting.getPath()
+		SendingTask totalTask = new SendingTask(setting.getSourcePath()
 				, setting.getIp(), setting.getPort(), logger, executorService);
 		
 		// 3. 디렉토리 유무 탐색
-		sendingTask.existDir();
+		totalTask.existDir();
 		
 		// 4. 파일 탐색 및 전송
 		while(true)
@@ -62,7 +62,7 @@ public class Client
 				public void run()
 				{
 					logger.info("탐색 및 전송 작업 시작");
-					sendingTask.searchAndSend();
+					totalTask.searchAndSend();
 				}
 			});
 			
@@ -79,7 +79,7 @@ public class Client
 			logger.info("탐색 및 전송 작업 끝");
 			
 			// 5. 빈 폴더 모두 삭제
-			sendingTask.delete();
+			totalTask.delete();
 			logger.info("빈 폴더 삭제");
 			
 			Thread.sleep(10000);

@@ -1,4 +1,4 @@
-package trans.server;
+package trans.client;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -9,13 +9,13 @@ import java.util.logging.Logger;
 
 public class Setting
 {
-	private String path, ip;
+	private String sourcePath, ip;
 	private int port, maxThread;
 	private Logger logger;
 	
 	public void loadProperties() throws Exception
 	{
-		String propertiesPath = Server.class.getResource("server.properties").getPath();
+		String propertiesPath = Client.class.getResource("client.properties").getPath();
 		Properties properties = new Properties();
 		
 		try
@@ -30,11 +30,11 @@ public class Setting
 			throw new Exception();
 		}
 		
-		path = properties.getProperty("path");
+		sourcePath = properties.getProperty("path");
 		port = Integer.parseInt(properties.getProperty("port"));
 		ip = properties.getProperty("ip");
 		if (properties.getProperty("maxThread").equals("default"))
-			maxThread = Runtime.getRuntime().availableProcessors();
+			maxThread = 3;
 		else
 		{
 			maxThread = (maxThread > Runtime.getRuntime().availableProcessors())
@@ -49,7 +49,7 @@ public class Setting
 	{
 		LogSetting logSetting = new LogSetting();
 				
-		String propertiesPath = Server.class.getResource("log.properties").getPath();
+		String propertiesPath = Client.class.getResource("log.properties").getPath();
 		Properties properties = new Properties();
 		
 		try
@@ -104,9 +104,9 @@ public class Setting
 		System.out.println("원본 디렉토리, 포트 번호, ip 유효성 검사 하는 곳");
 	}
 	
-	public String getPath()
+	public String getSourcePath()
 	{
-		return path;
+		return sourcePath;
 	}
 
 	public String getIp()

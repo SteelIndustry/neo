@@ -48,10 +48,10 @@ public class Server
 				logger.info(sb.toString());
 				
 				// 4. 작업용 객체 생성
-				ReceivingFile rf = new ReceivingFile(socket, setting.getPath(), logger);
+				ReceivingFile rf = new ReceivingFile(socket, setting.getSourcePath(), logger);
 				
 				// 5. 저장 디렉토리 존재 유무. 없으면 디렉토리 생성
-				rf.existDir(setting.getPath());
+				rf.existDir(setting.getSourcePath());
 				
 				// 6. 파일 수신 작업
 				executorService.submit(new Runnable()

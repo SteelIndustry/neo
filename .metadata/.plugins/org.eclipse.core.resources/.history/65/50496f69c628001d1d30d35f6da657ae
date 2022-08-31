@@ -18,7 +18,7 @@ public class LogSetting
 	
 	LogSetting()
 	{
-		logger = Logger.getLogger("server");
+		logger = Logger.getLogger("client");
 	}
 	
 	public Logger getLogger() { return logger; }
