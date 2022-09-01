@@ -20,7 +20,7 @@ public class Server
 		Setting setting = new Setting();
 		setting.loadProperties();
 		setting.loadLogProperties();
-		
+				
 		// Logger 객체
 		logger = setting.getLogger();
 		

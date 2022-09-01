@@ -1,8 +1,11 @@
 package trans.client;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -71,7 +74,7 @@ public class Setting
 		
 		switch (logLevel)
 		{
-			case "SERVERE":
+			case "SEVERE":
 				level = Level.SEVERE;
 				break;
 			case "WARNING":
@@ -94,7 +97,51 @@ public class Setting
 				break;
 		}
 		
-		logSetting.setLog(logPath, level);
+		boolean defaultName = Boolean.valueOf(properties.getProperty("defaultName"));
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append(logPath);
+		
+		if (!defaultName)
+		{
+			boolean date = Boolean.valueOf(properties.getProperty("date"));
+			boolean actor = Boolean.valueOf(properties.getProperty("actor"));
+			
+			if (date)
+			{
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd__HH_mm");
+				Calendar cal = Calendar.getInstance();
+				sdf.format(cal.getTime());
+				
+				sb.append(sdf.format(cal.getTime()));
+				sb.append("__");
+			}
+			if (actor)
+			{
+				sb.append("Client__");
+			}	
+		}
+		
+		sb.append("log");
+		
+		StringBuffer sb2 = new StringBuffer( (sb.toString()+".txt"));
+		
+		int count = 1;
+		while(true)
+		{
+			File file = new File(sb2.toString());
+			System.out.println("진입");
+			
+			if (!file.exists()) break;
+			
+			sb2 = new StringBuffer( sb.toString() );
+			sb2.append("(");
+			sb2.append(count++);
+			sb2.append(")");
+			sb2.append(".txt");
+		}
+		
+		logSetting.setLog(sb2.toString(), level);
 		
 		logger = logSetting.getLogger();
 	}

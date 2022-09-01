@@ -46,6 +46,8 @@ public class Client
 		); 
 		executorService = threadPoolExecutor;
 		
+		System.out.println(setting.getPath());
+		
 		// 2. 전송 작업용 클래스		
 		SendingTask sendingTask = new SendingTask(setting.getPath()
 				, setting.getIp(), setting.getPort(), logger, executorService);
@@ -67,7 +69,7 @@ public class Client
 			});
 			
 			// 우연한 종료를 막기 위한 안전장치
-			Thread.sleep(2000);
+			Thread.sleep(5000);
 			
 			// 활동 중인 쓰레드가 중지될 때까지 대기
 			int count = threadPoolExecutor.getActiveCount();
