@@ -18,7 +18,7 @@ public class Setting
 	
 	public void loadProperties() throws Exception
 	{
-		String propertiesPath = Client.class.getResource("client.properties").getPath();
+		String propertiesPath = Old_Client.class.getResource("client.properties").getPath();
 		Properties properties = new Properties();
 		
 		try
@@ -52,7 +52,7 @@ public class Setting
 	{
 		LogSetting logSetting = new LogSetting();
 				
-		String propertiesPath = Client.class.getResource("log.properties").getPath();
+		String propertiesPath = Old_Client.class.getResource("log.properties").getPath();
 		Properties properties = new Properties();
 		
 		try
@@ -130,7 +130,6 @@ public class Setting
 		while(true)
 		{
 			File file = new File(sb2.toString());
-			System.out.println("진입");
 			
 			if (!file.exists()) break;
 			

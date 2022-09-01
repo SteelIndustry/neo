@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
-		<item key="selection" value="sendingTask"/>
+		<item key="selection" value="getAccuratePath"/>
 		<item key="wrap" value="true"/>
 		<item key="casesensitive" value="false"/>
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
 		<list key="findhistory">
+			<item value="getAccuratePath"/>
+			<item value="existdir"/>
+			<item value="system.out"/>
+			<item value="진입"/>
+			<item value="producer"/>
 			<item value="totalTask"/>
 			<item value="SendingTask"/>
 			<item value="source"/>
@@ -18,15 +23,14 @@
 			<item value="count"/>
 			<item value="getDirPath"/>
 			<item value="ip"/>
-			<item value="port"/>
-			<item value="system.out"/>
 		</list>
 		<list key="replacehistory">
+			<item value="consumer"/>
 			<item value="sendingTask"/>
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
-		<item key="DIALOG_X_ORIGIN" value="1118"/>
+		<item key="DIALOG_X_ORIGIN" value="1112"/>
 		<item key="DIALOG_Y_ORIGIN" value="167"/>
 		<item key="DIALOG_WIDTH" value="322"/>
 		<item key="DIALOG_HEIGHT" value="391"/>
