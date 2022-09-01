@@ -85,11 +85,12 @@ public class ReceivingFile
 				copy(file, fileSize);
 				
 				// 정합성 결과 발신
+				boolean check = checkConsistency(file, fileSize);
+				
 				os = socket.getOutputStream();
 				bos = new BufferedOutputStream(os);
 				dos = new DataOutputStream(bos);
-				
-				boolean check = (file.length() != fileSize) ? false : true; 
+				 
 				dos.writeBoolean(check);
 				
 				// 정합성 검사 실패했으면 파일 삭제
@@ -160,6 +161,11 @@ public class ReceivingFile
 			sb.append(e.getMessage());
 			logger.warning(sb.toString());
 		}
+	}
+	
+	private boolean checkConsistency (File file, long fileSize)
+	{
+		return (file.length() != fileSize) ? false: true;
 	}
 	
 	public void close()

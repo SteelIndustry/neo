@@ -1,0 +1,21 @@
+package test;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
+import trans.client.Client;
+
+public class Test
+{
+	public static void main(String[] args) throws UnsupportedEncodingException
+	{
+		String path = URLDecoder.decode(Client.class.getResource("client.properties").getPath(), "utf-8");
+		
+		System.out.println(Thread.currentThread().getStackTrace()[1].getClassName());
+		
+		String[] str = Thread.currentThread().getStackTrace()[1].getClassName().split(".");
+		
+		
+		System.out.println(str[str.length-1]);
+	}
+}
