@@ -6,8 +6,8 @@ public class Main
 	{
 		Repository rep = Repository.getInstance();
 		
-		int producerCount = 2;
-		int consumerCount = 10;
+		int producerCount = 1;
+		int consumerCount = 1;
 		
 		Thread[] producers = new Thread[producerCount];
 		Thread[] consumers = new Thread[consumerCount];
