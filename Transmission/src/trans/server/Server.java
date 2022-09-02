@@ -59,7 +59,11 @@ public class Server
 					@Override
 					public void run()
 					{
-						rf.receiveFile();
+						boolean consistency = rf.receiveFile();
+						
+						// 정합성 검사 실패했으면 파일 삭제
+						if (!consistency)
+							rf.delete();
 					}
 				});
 			}
