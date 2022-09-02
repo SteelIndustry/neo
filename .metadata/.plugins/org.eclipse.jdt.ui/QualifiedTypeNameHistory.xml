@@ -27,7 +27,6 @@
     <fullyQualifiedTypeName name="java.util.concurrent.ThreadPoolExecutor"/>
     <fullyQualifiedTypeName name="java.util.logging.FileHandler"/>
     <fullyQualifiedTypeName name="java.util.logging.SimpleFormatter"/>
-    <fullyQualifiedTypeName name="java.util.logging.Level"/>
     <fullyQualifiedTypeName name="java.util.Date"/>
     <fullyQualifiedTypeName name="trans.client.Log.LogFormatter"/>
     <fullyQualifiedTypeName name="java.util.logging.ConsoleHandler"/>
@@ -44,7 +43,6 @@
     <fullyQualifiedTypeName name="java.util.LinkedList"/>
     <fullyQualifiedTypeName name="java.util.Queue"/>
     <fullyQualifiedTypeName name="java.lang.InterruptedException"/>
-    <fullyQualifiedTypeName name="java.lang.StringBuffer"/>
     <fullyQualifiedTypeName name="test.Producer"/>
     <fullyQualifiedTypeName name="test.Consumer"/>
     <fullyQualifiedTypeName name="java.io.File"/>
@@ -55,4 +53,6 @@
     <fullyQualifiedTypeName name="java.util.concurrent.ArrayBlockingQueue"/>
     <fullyQualifiedTypeName name="java.util.concurrent.LinkedBlockingQueue"/>
     <fullyQualifiedTypeName name="java.lang.Thread"/>
+    <fullyQualifiedTypeName name="java.lang.StringBuffer"/>
+    <fullyQualifiedTypeName name="java.util.logging.Level"/>
 </qualifiedTypeNameHistroy>

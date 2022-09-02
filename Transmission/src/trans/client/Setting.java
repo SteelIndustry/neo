@@ -18,7 +18,7 @@ public class Setting
 	
 	public void loadProperties() throws Exception
 	{
-		String propertiesPath = Old_Client.class.getResource("client.properties").getPath();
+		String propertiesPath = Client.class.getResource("client.properties").getPath();
 		Properties properties = new Properties();
 		
 		try
@@ -52,7 +52,7 @@ public class Setting
 	{
 		LogSetting logSetting = new LogSetting();
 				
-		String propertiesPath = Old_Client.class.getResource("log.properties").getPath();
+		String propertiesPath = Client.class.getResource("log.properties").getPath();
 		Properties properties = new Properties();
 		
 		try
