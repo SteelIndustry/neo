@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ReceivingFile
@@ -19,6 +20,9 @@ public class ReceivingFile
 	
 	private Socket socket;
 	private String repository;
+	private String filePath;
+	private boolean consistency;
+	
 	private Logger logger;
 	
 	private OutputStream os;
@@ -35,6 +39,9 @@ public class ReceivingFile
 		this.socket = socket;
 		this.repository = repositoryPath;
 		this.logger = logger;
+		this.filePath = null;
+		this.consistency = false;
+		
 	}
 	
 	public void existDir(String path)
@@ -51,7 +58,7 @@ public class ReceivingFile
 		}
 	}
 	
-	public void receiveFile()
+	public boolean receiveFile()
 	{
 		try
 		{
@@ -64,7 +71,9 @@ public class ReceivingFile
 			boolean isDir = dis.readBoolean();
 			
 			// File 객체 생성
-			File file = new File(getAccuratePath(dis.readUTF()));
+			filePath = getAccuratePath(dis.readUTF());
+			
+			File file = new File(filePath);
 			
 			StringBuffer sb = new StringBuffer(file.getName());
 			sb.append(" 파일 수신 작업 시작");
@@ -84,33 +93,35 @@ public class ReceivingFile
 				// 파일 수신
 				copy(file, fileSize);
 				
-				// 정합성 결과 발신
-				boolean check = checkConsistency(file, fileSize);
-				
+				// 정합성 검사 결과 발신용 스트림 open
 				os = socket.getOutputStream();
 				bos = new BufferedOutputStream(os);
 				dos = new DataOutputStream(bos);
 				 
-				dos.writeBoolean(check);
+				// 정합성 검사 결과 발신
+				consistency = checkConsistency(file, fileSize);
+				dos.writeBoolean(consistency);
 				
-				// 정합성 검사 실패했으면 파일 삭제
-				if (!check)
+				if (logger.getLevel() == Level.CONFIG || 
+						logger.getLevel() == Level.FINE || 
+							logger.getLevel() == Level.FINER || 
+								logger.getLevel() == Level.FINEST)
 				{
-					file.delete();
-					sb = new StringBuffer("정합성 검사 실패");
-					sb.append("한 파일 ");
-					sb.append(file.getName());
-					
+					sb = new StringBuffer(file.getName());
+					sb.append(" 정합성 검사 결과");
+					sb.append(consistency ? " 성공": " 실패");
+					logger.config(sb.toString());
 				}
-				logger.info(sb.toString());
+				
 			}
 			else
 			{
 				// 전달받은 디렉토리 생성
 				existDir(file.getPath());
+				
+				consistency = true;
 				logger.info("폴더 생성");
 			}
-									
 		} catch (IOException e)
 		{
 			e.printStackTrace();
@@ -119,6 +130,29 @@ public class ReceivingFile
 		{
 			close();
 		}
+		return consistency;
+	}
+	
+	public void delete()
+	{
+		if (filePath != null)
+		{
+			File file = new File(filePath);
+			
+			StringBuffer sb = new StringBuffer("정합성 검사 실패한 파일 ");
+			sb.append(file.getPath());
+			
+			if (file.delete())
+			{
+				sb.append(" 삭제 성공");
+			}
+			else
+			{
+				sb.append(" 삭제 실패");
+			}
+			
+			logger.info(sb.toString());
+		}		
 	}
 	
 	public String getAccuratePath(String path)

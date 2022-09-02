@@ -64,10 +64,15 @@ public class ClientTask
 							file.delete();
 							sb.append(" 후 디렉토리에서 삭제");
 						}
+						else
+						{
+							sb.append(" 실패");
+						}
 						logger.info(sb.toString());	
 					}
 				};
 				executorService.submit(runnable);
+				
 			}
 		}
 	}

@@ -130,7 +130,6 @@ public class Setting
 		while(true)
 		{
 			File file = new File(sb2.toString());
-			System.out.println("진입");
 			
 			if (!file.exists()) break;
 			
