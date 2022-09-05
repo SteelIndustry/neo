@@ -7,5 +7,4 @@ public class Pub
 	private int head, tail, count;
 	private final int SIZE=10;
 	
-	public Pub
 }
