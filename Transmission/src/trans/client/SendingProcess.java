@@ -88,6 +88,11 @@ public class SendingProcess
 		{
 			if (!file.isDirectory())
 			{
+				int data = -1;
+				long fileSize = file.length();
+				long sentData = 0;
+				
+				
 				// 디렉토리인지 파일인지
 				dos.writeBoolean(false);
 				
@@ -95,23 +100,27 @@ public class SendingProcess
 				dos.writeUTF(path);
 				
 				// 파일 사이즈
-				dos.writeLong(file.length());
+				dos.writeLong(fileSize);
 				
 				// 파일 바이트 전송
-				int data = -1;
 				byte[] bytes = new byte[BUFFER_SIZE];	
 				while ((data = bis.read(bytes)) > 0)
 				{
 					dos.write(bytes, 0, data);
+					sentData += data;
 				}
 				dos.flush();
 				
-				// 정합성 결과 수신
-				is = socket.getInputStream();
-				bis = new BufferedInputStream(is);
-				dis = new DataInputStream(bis);
-				
-				deleteCheck = dis.readBoolean();					
+				// 파일 사이즈만큼 제대로 전송했을 때
+				if (sentData == fileSize)
+				{
+					// 정합성 결과 수신
+					is = socket.getInputStream();
+					bis = new BufferedInputStream(is);
+					dis = new DataInputStream(bis);
+					
+					deleteCheck = dis.readBoolean();
+				}
 			}
 			// 빈 디렉토리 보낼 때
 			else
