@@ -102,10 +102,11 @@ public class ReceivingFile
 				consistency = checkConsistency(file, fileSize);
 				dos.writeBoolean(consistency);
 				
-				if (logger.getLevel() == Level.CONFIG || 
-						logger.getLevel() == Level.FINE || 
-							logger.getLevel() == Level.FINER || 
-								logger.getLevel() == Level.FINEST)
+				if (logger.getLevel() == Level.INFO ||
+						logger.getLevel() == Level.CONFIG || 
+							logger.getLevel() == Level.FINE || 
+								logger.getLevel() == Level.FINER || 
+									logger.getLevel() == Level.FINEST)
 				{
 					sb = new StringBuffer(file.getName());
 					sb.append(" 정합성 검사 결과");

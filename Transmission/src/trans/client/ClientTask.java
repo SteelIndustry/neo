@@ -1,7 +1,10 @@
 package trans.client;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
 public class ClientTask
@@ -10,6 +13,7 @@ public class ClientTask
 	private ExecutorService executorService;
 	private Logger logger;
 	private Setting setting;
+	private List<Future<?>> futureList;
 	
 	public ClientTask(Setting setting, ExecutorService executorService)
 	{
@@ -17,6 +21,7 @@ public class ClientTask
 		this.source = setting.getPath();
 		this.logger = setting.getLogger();
 		this.executorService = executorService;
+		this.futureList = new ArrayList<Future<?>>();
 	}
 	
 	public void existDir()
@@ -53,7 +58,8 @@ public class ClientTask
 					@Override
 					public void run()
 					{
-						boolean deleteCheck = send(file, shortPath);
+						boolean deleteCheck = false;
+						deleteCheck = send(file, shortPath);
 						
 						StringBuffer sb = new StringBuffer(file.getName());
 						sb.append(" 파일 전송");
@@ -68,11 +74,12 @@ public class ClientTask
 						{
 							sb.append(" 실패");
 						}
-						logger.info(sb.toString());	
+						logger.info(sb.toString());							
 					}
 				};
-				executorService.submit(runnable);
-				
+				//executorService.submit(runnable);
+				Future<?> future = executorService.submit(runnable);
+				futureList.add(future);
 			}
 		}
 	}
@@ -128,6 +135,11 @@ public class ClientTask
 		}	
 	}
 	
+	public List<Future<?>> getFutureList()
+	{
+		return futureList;
+	}
+
 	// source: C:/TMTest/source
 	// file path: C:/TMTest/source/folder1/text.txt
 	// 일 때, path = "/folder1/text.txt"로 설정하여 search(String path)의 파라미터로 넘겨줌.
