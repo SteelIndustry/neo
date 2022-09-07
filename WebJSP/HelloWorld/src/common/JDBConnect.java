@@ -53,8 +53,8 @@ public class JDBConnect {
 			Class.forName(driver);
 			
 			String url = application.getInitParameter("OracleURL");
-			String user = application.getInitParameter("OracleUser");
-			String password = application.getInitParameter("OraclePassword");
+			String user = application.getInitParameter("OracleId");
+			String password = application.getInitParameter("OraclePwd");
 			con = DriverManager.getConnection(url, user, password);
 			
 			System.out.println("DB 연결 성공(인수 생성자 2)");

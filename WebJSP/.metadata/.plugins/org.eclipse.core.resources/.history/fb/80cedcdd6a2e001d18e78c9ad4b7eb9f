@@ -1,0 +1,40 @@
+<%@page import="model1.board.BoardDTO"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.HashMap"%>
+<%@page import="java.util.Map"%>
+<%@page import="model1.board.BoardDAO"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"
+    trimDirectiveWhitespaces="true"%>
+    
+<%
+
+BoardDAO dao = new BoardDAO(application);
+
+Map<String, Object> param = new HashMap<String, Object>();
+String searchField = request.getParameter("searchField");
+String searchWord = request.getParameter("searchWord");
+if (searchWord != null)
+{
+	param.put("searchField", searchField);
+	param.put("searchWord", searchWord);
+}
+
+int totalCount = dao.selectCount(param);
+List<BoardDTO> boardLists = dao.selectList(param);
+dao.close();
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<jsp:include page="../Common/Link.jsp"/>
+	
+	<h2>목록 보기(List)</h2>
+
+
+</body>
+</html>
