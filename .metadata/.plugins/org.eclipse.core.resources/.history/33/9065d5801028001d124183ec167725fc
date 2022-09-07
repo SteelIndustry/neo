@@ -1,9 +1,0 @@
-package trans.client;
-
-public class TestClass
-{
-	public void testPrint()
-	{
-		System.out.println("테스트 중");
-	}
-}
