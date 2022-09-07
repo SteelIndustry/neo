@@ -10,7 +10,7 @@
 			<!-- 절대 경로 <a href="/HelloWorld/06Session/LoginForm.jsp">로그인</a> --> 
 		<% } else { %>
 			<!-- 상대 경로 --><a href="../06Session/Logout.jsp">로그아웃</a>
-			<!-- <!-- 절대 경로 --><a href="/HelloWorld/06Session/Loginout.jsp">로그인</a> -->
+			<!-- 절대 경로 <a href="/HelloWorld/06Session/Logout.jsp">로그아웃</a> -->
 		<% } %>
 			<!-- 회원제 게시판 -->
 			&nbsp;&nbsp;&nbsp;
