@@ -1,0 +1,22 @@
+<%@page import="java.util.Date"%>
+<%@page import="java.text.SimpleDateFormat"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"
+    trimDirectiveWhitespaces="true"%>
+<%
+SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+
+long creationTime = session.getCreationTime();
+String creationTimeStr = dateFormat.format(new Date(creationTime));
+
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Session</title>
+</head>
+<body>
+
+</body>
+</html>

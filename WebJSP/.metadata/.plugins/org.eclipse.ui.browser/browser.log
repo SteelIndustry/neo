@@ -1,0 +1,15 @@
+
+9월 05, 2022 11:01:10.344 NEW SESSION
+9월 05, 2022 11:01:10.344 [6436:10124:0905/110110.344:ERROR:util.cc(129)] Can't create base directory: C:\Program Files\Google\GoogleUpdater
+
+9월 05, 2022 16:07:43.778 NEW SESSION
+9월 05, 2022 16:07:43.778 [11980:10936:0905/160743.778:ERROR:util.cc(129)] Can't create base directory: C:\Program Files\Google\GoogleUpdater
+9월 05, 2022 16:09:09.453 [5124:7412:0905/160909.453:ERROR:util.cc(129)] Can't create base directory: C:\Program Files\Google\GoogleUpdater
+9월 05, 2022 16:09:19.787 [5124:7348:0905/160919.786:ERROR:sharing_service.cc(252)] Device un-registration failed with fatal error
+9월 05, 2022 16:14:02.702 [7296:11852:0905/161402.702:ERROR:util.cc(129)] Can't create base directory: C:\Program Files\Google\GoogleUpdater
+9월 05, 2022 16:26:31.457 [10312:2428:0905/162631.457:ERROR:util.cc(129)] Can't create base directory: C:\Program Files\Google\GoogleUpdater
+9월 05, 2022 16:32:24.423 [10312:880:0905/163224.423:ERROR:interface_endpoint_client.cc(689)] Message 0 rejected by interface blink.mojom.WidgetHost
+9월 05, 2022 17:22:58.263 [10312:880:0905/172258.262:ERROR:interface_endpoint_client.cc(689)] Message 0 rejected by interface blink.mojom.WidgetHost
+
+9월 06, 2022 16:13:40.895 NEW SESSION
+9월 06, 2022 16:13:40.895 [9572:12256:0906/161340.895:ERROR:util.cc(129)] Can't create base directory: C:\Program Files\Google\GoogleUpdater
