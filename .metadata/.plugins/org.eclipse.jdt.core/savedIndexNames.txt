@@ -1,4 +1,0 @@
-INDEX VERSION 1.131+C:\neo\.metadata\.plugins\org.eclipse.jdt.core
-2529567628.index
-2150091776.index
-3092446199.index
