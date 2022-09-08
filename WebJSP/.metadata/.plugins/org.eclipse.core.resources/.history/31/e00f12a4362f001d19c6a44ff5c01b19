@@ -1,0 +1,22 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"
+    trimDirectiveWhitespaces="true"%>
+<%
+int num1 = 3;
+pageContext.setAttribute("num2", 4);
+pageContext.setAttribute("num3", "5");
+pageContext.setAttribute("num4", "8");
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>표현 언어(EL) - 연산자</title>
+</head>
+<body>
+	<h3>변수 선언 및 할당</h3>
+	스크립틀릿에서 선언한 변수 : <1> num1 </1>
+
+
+</body>
+</html>

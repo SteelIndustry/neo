@@ -1,19 +1,5 @@
 INDEX VERSION 1.131
-C:\neo\WebJSP\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\2830615768.index
+C:\neo\WebJSP\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\1945883483.index
 \HelloWorld\src
-C:\neo\WebJSP\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\2699657126.index
-\HelloWorld\src
-C:\neo\WebJSP\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\1010367872.index
-\HelloWorld\src
-C:\neo\WebJSP\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\318143511.index
-\HelloWorld\src
-C:\neo\WebJSP\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\2188327008.index
-\HelloWorld\src
-C:\neo\WebJSP\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\3763881424.index
-\HelloWorld\src
-C:\neo\WebJSP\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\3529952135.index
-\HelloWorld\src
-C:\neo\WebJSP\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\2923329760.index
-\HelloWorld\src
-C:\neo\WebJSP\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\3601736258.index
+C:\neo\WebJSP\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\1128041157.index
 \HelloWorld\src
