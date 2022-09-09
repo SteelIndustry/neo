@@ -20,6 +20,7 @@ pageContext.setAttribute("sizeZero", new ArrayList<>());
 </head>
 <body>
 	<h3>empty 연산자</h3>
+	<%-- 
 	empty nullStr : ${empty nullStr } <br />
 	empty emptyStr : ${empty emptyStr }	 <br />
 	empty lengthZero : ${empty lengthZero } <br />
@@ -32,5 +33,6 @@ pageContext.setAttribute("sizeZero", new ArrayList<>());
 	null + 10 : ${null + 10 } <br />
 	nullStr + 10 : ${nullStr + 10 } <br />
 	param.noVar > 10 : ${ param.noVar > 10 }
+	--%>
 </body>
 </html>

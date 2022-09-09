@@ -1,0 +1,12 @@
+package test;
+
+public class Main
+{
+	public static void main(String[] args)
+	{
+		Repository rep = Repository.getInstance();
+		
+		Producer producer = new Producer("Producer 1", rep);
+		Consumer consumer = new Consumer("Consumer 1", rep);
+	}
+}

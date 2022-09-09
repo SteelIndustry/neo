@@ -1,0 +1,20 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"
+    trimDirectiveWhitespaces="true"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>JSTL - Remove</title>
+</head>
+<body>
+	<h4>출력하기</h4>
+	<ul>
+		<li>scopeVar : ${scopeVar }</li>
+		<li>requestScope.scopeVar : ${requestScope.scopeVar }</li>
+		<li>sessionScope.scopeVar : ${ sessionScope.scopeVar }</li>
+		<li>applicationScope.scopeVar : ${applicationScope.scopeVar }</li>
+	</ul>
+</body>
+</html>

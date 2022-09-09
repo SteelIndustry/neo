@@ -1,0 +1,22 @@
+package test;
+
+public class Consumer implements Runnable
+{
+	private final Repository rep;
+	private String name;
+	private int i = 0;
+	
+	public Consumer(String name, Repository rep)
+	{
+		this.name = name;
+		this.rep = rep;
+	}
+	
+	@Override
+	public void run()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+}

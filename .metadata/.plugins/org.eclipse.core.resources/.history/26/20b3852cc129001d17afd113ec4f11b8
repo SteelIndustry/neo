@@ -1,0 +1,36 @@
+package test;
+
+public class Producer implements Runnable
+{
+	private final Repository rep;
+	private String name;
+	private int i = 0;
+	private boolean stop;
+	
+	public Producer(String name, Repository rep)
+	{
+		this.name = name;
+		this.rep = rep;
+		this.stop = false;
+	}
+	
+	@Override
+	public void run()
+	{
+		StringBuffer sb;
+		try
+		{
+			while(!stop)
+			{
+				sb = new StringBuffer();
+				sb.append("[").append(name).append("]: ").append(i++);
+				rep.add(sb.toString());
+				
+			}
+		} catch (InterruptedException e)
+		{
+		}		
+	}
+	
+	public void terminate() { this.stop = true; }
+}

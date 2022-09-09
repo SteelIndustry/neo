@@ -1,0 +1,48 @@
+package test;
+
+public class Main
+{
+	public static void main(String[] args)
+	{
+		Repository rep = Repository.getInstance();
+		
+		int producerCount = 2;
+		int consumerCount = 15;
+		
+		Thread[] producers = new Thread[producerCount];
+		Thread[] consumers = new Thread[consumerCount];
+		
+		for (int i=0; i<producerCount; i++)
+		{
+			String name = "Producer " + (i+1);
+			Thread producerThread = new Thread(new Producer(name, rep));
+			
+			producerThread.start();
+			producers[i] = producerThread;
+		}
+		
+		for (int i=0; i<consumerCount; i++)
+		{
+			String name = "Consumer " + (i+1);
+			Thread consumerThread = new Thread(new Consumer(name, rep));
+			
+			consumerThread.start();
+			consumers[i] = consumerThread;
+		}
+		
+		try
+		{
+			Thread.sleep(10000);
+			
+			for(Thread p : producers)
+				p.interrupt();
+			
+			for(Thread c : consumers)
+				c.interrupt();
+			
+		} catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+	}
+}

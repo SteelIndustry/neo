@@ -1,0 +1,15 @@
+package test;
+
+public class Main
+{
+	public static void main(String[] args)
+	{
+		Repository r = Repository.getInstance();
+		
+		
+		for(int i=0; i<10; i++)
+			r.q.add(String.valueOf(i));
+		
+		System.out.println(r.q.size());
+	}
+}

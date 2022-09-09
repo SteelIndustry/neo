@@ -13,7 +13,7 @@
 
 	<h2>3. 요청 헤더 정보 출력하기</h2>
 	<%
-	Enumeration headers = request.getHeaderNames();
+	Enumeration<?> headers = request.getHeaderNames();
 	while (headers.hasMoreElements())
 	{
 		String headerName = (String)headers.nextElement();

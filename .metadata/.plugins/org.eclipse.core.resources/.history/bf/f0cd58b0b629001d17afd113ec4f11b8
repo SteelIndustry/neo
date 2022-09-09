@@ -1,0 +1,25 @@
+package test;
+
+import java.util.LinkedList;
+import java.util.Queue;
+
+public class Repository
+{
+	private Queue<String> q;
+	private int QSIZE=10;
+	
+	private Repository() 
+	{
+		this.q = new LinkedList<String>();
+	}
+	
+	private static class InnerInstanceClazz
+	{
+		private static final Repository instance = new Repository();
+	}
+	
+	public static Repository getInstance()
+	{
+		return InnerInstanceClazz.instance;
+	}
+}

@@ -1,0 +1,25 @@
+package test;
+
+public class Producer implements Runnable
+{
+	private final Repository rep;
+	private int i = 0;
+	
+	public Producer(Repository rep)
+	{
+		this.rep = rep;
+	}
+	
+	@Override
+	public void run()
+	{
+		try
+		{
+			String data = 
+			
+			
+		} catch (InterruptedException e)
+		{
+		}		
+	}
+}

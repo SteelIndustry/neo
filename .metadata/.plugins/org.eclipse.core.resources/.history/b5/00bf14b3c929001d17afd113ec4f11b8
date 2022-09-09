@@ -1,0 +1,41 @@
+package test;
+
+public class Producer implements Runnable
+{
+	private final Repository rep;
+	private String name;
+	private int i = 0;
+	private boolean stop;
+	private int time;
+	
+	public Producer(String name, Repository rep, int time)
+	{
+		this.name = name;
+		this.rep = rep;
+		this.stop = false;
+		this.time = time;
+	}
+	
+	@Override
+	public void run()
+	{
+		StringBuffer sb;
+		try
+		{
+			while(!stop)
+			{
+				sb = new StringBuffer();
+				sb.append("[").append(name).append("]: ").append(i++);
+				rep.add(sb.toString());
+				
+				System.out.println(sb.toString() + " add");
+				
+				Thread.sleep(100);				
+			}
+		} catch (InterruptedException e)
+		{
+		}		
+	}
+	
+	public void terminate() { this.stop = true; }
+}

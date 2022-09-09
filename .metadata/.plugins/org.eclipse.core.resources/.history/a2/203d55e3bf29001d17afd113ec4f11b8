@@ -1,0 +1,36 @@
+package test;
+
+public class Consumer implements Runnable
+{
+	private final Repository rep;
+	private String name;
+	private int i = 0;
+	
+	public Consumer(String name, Repository rep)
+	{
+		this.name = name;
+		this.rep = rep;
+	}
+	
+	@Override
+	public void run()
+	{
+		StringBuffer sb;
+		try
+		{
+			while(true)
+			{
+				sb = new StringBuffer();
+				
+				sb.append(rep.remove());
+				sb.append(" / ").append("[").append(name).append("]: ").append("worked.");
+				
+				
+				Thread.sleep(1000);
+			}
+		} catch (InterruptedException e)
+		{
+		}
+	}
+
+}
