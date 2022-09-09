@@ -1,0 +1,16 @@
+package test;
+
+public class Repository
+{
+	private Repository() {}
+	
+	private static class InnerInstanceClazz()
+	{
+		private static final Repository instance = new Repository();
+	}
+	
+	public static Repository getInstance()
+	{
+		return InnerInstanceClazz.instance;
+	}
+}

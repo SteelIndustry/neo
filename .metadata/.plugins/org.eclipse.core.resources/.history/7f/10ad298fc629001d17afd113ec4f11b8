@@ -1,0 +1,78 @@
+package test;
+
+import java.util.LinkedList;
+import java.util.Queue;
+
+public class Repository
+{
+	private Queue<String> q;
+	private String[] list;
+	
+	private int head = 0;
+	private int tail;
+	private int count;
+	
+	private int QSIZE=10;
+	
+	private Repository() 
+	{
+		this.q = new LinkedList<String>();
+		this.list = new String[QSIZE];
+		
+		this.head = 0;
+		this.tail = 0;
+		this.count = 0;
+	}
+	
+	private static class InnerInstanceClazz
+	{
+		private static final Repository instance = new Repository();
+	}
+	
+	public static Repository getInstance()
+	{
+		return InnerInstanceClazz.instance;
+	}
+	
+	public synchronized void add(String s) throws InterruptedException
+	{
+		/*
+		if (q.size() >= QSIZE)
+			wait();
+		
+		q.add(s);
+		*/
+		
+		while( (tail) >= (list.length-1) )
+		{
+			wait();
+		}
+		
+		list[tail] = s;
+		tail = tail < 9 ? tail++ : 9;
+		
+		print();
+		
+		notifyAll();
+	}
+	
+	public synchronized String remove() throws InterruptedException
+	{
+		if (q.isEmpty())
+			wait();
+		
+		while ()
+		
+		String s = q.remove();
+		print();
+				
+		notifyAll();
+		
+		return s;
+	}
+	
+	private synchronized void print()
+	{
+		System.out.println("현재: "+list.length);
+	}
+}

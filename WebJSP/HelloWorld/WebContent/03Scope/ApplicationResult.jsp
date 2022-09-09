@@ -14,6 +14,7 @@
 <body>
 	<h2>application 영역의 속성 읽기</h2>
 	<%
+	/* 
 	Map<String, Person> maps = (Map<String, Person>)application.getAttribute("maps");
 	Set<String> keys = maps.keySet();
 	
@@ -23,7 +24,7 @@
 		out.print(String.format("이름 : %s, 나이 : %d<br/>", 
 				person.getName(), person.getAge()));	
 	}
-	
+	 */
 	%>
 	
 </body>

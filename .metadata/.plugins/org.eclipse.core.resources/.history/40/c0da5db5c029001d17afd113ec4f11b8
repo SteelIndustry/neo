@@ -1,0 +1,20 @@
+package test;
+
+public class Main
+{
+	public static void main(String[] args)
+	{
+		Repository rep = Repository.getInstance();
+		
+		Producer producer = new Producer("Producer 1", rep);
+		Consumer consumer = new Consumer("Consumer 1", rep);
+		
+		Thread p1 = new Thread(producer);
+		Thread c1 = new Thread(consumer);
+		
+		p1.start();
+		c1.start();
+		
+		
+	}
+}
