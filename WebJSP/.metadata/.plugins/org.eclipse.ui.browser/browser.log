@@ -13,3 +13,13 @@
 
 9월 06, 2022 16:13:40.895 NEW SESSION
 9월 06, 2022 16:13:40.895 [9572:12256:0906/161340.895:ERROR:util.cc(129)] Can't create base directory: C:\Program Files\Google\GoogleUpdater
+
+9월 13, 2022 18:04:30.806 NEW SESSION
+9월 13, 2022 18:04:30.806 [10192:7056:0913/180430.805:ERROR:util.cc(129)] Can't create base directory: C:\Program Files\Google\GoogleUpdater
+
+9월 14, 2022 09:47:21.84 NEW SESSION
+9월 14, 2022 09:47:21.84 [7004:4928:0914/094721.084:ERROR:util.cc(129)] Can't create base directory: C:\Program Files\Google\GoogleUpdater
+9월 14, 2022 10:22:09.684 [libprotobuf ERROR ..\..\third_party\protobuf\src\google\protobuf\message_lite.cc:133] Can't parse message of type "safe_browsing.ClientDownloadRequest" because it is missing required fields: (cannot determine missing fields for lite message)
+9월 14, 2022 10:22:37.808 [libprotobuf ERROR ..\..\third_party\protobuf\src\google\protobuf\message_lite.cc:133] Can't parse message of type "safe_browsing.ClientDownloadRequest" because it is missing required fields: (cannot determine missing fields for lite message)
+9월 14, 2022 10:24:56.719 [libprotobuf ERROR ..\..\third_party\protobuf\src\google\protobuf\message_lite.cc:133] Can't parse message of type "safe_browsing.ClientDownloadRequest" because it is missing required fields: (cannot determine missing fields for lite message)
+9월 14, 2022 10:26:37.124 [libprotobuf ERROR ..\..\third_party\protobuf\src\google\protobuf\message_lite.cc:133] Can't parse message of type "safe_browsing.ClientDownloadRequest" because it is missing required fields: (cannot determine missing fields for lite message)
