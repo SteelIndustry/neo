@@ -1,0 +1,66 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"
+    trimDirectiveWhitespaces="true"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>검색 API</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+// [검색 요청] 버튼 클릭 시 실행할 메소드를 정의합니다.
+
+$(function() {
+	$('#searchBtn').click(function() {
+		$.ajax({
+			url : "../NaverSearchAPI.do"	// 요청 URL
+			, type : "get",					// HTTP 메소드
+			, data : {						// 매개변수로 전달할 데이터
+				keyword : $('#keyword').val()	// 검색어
+				, startNum : $('#startNum option:selected').val()	// 검색 시작 위치
+			}
+			, dataType : "json",	// 응답 데이터 형식
+			, success : sucFuncJson, // 요청 성공 시 호출할 메소드 설정. () 없다.
+			, error : errFunc	// 요청 실패 시 호출할 메소드 설정
+		});
+	});
+});
+
+// 검색 성공 시 결과를 화면에 뿌려줍니다.
+
+function sucFuncJson(d) {
+	var str = "";
+	$.each(d.items, function(index, item) {
+		str += "<ul>";
+		str += "<li>"+ (index + 1) +"</li>";
+		str += "<li>"+ item.title +"</li>";
+		str += "<li>"+ item.description +"</li>";
+		str += "<li>"+ item.bloggername +"</li>";
+		str += "<li>"+ item.bloggerlink +"</li>";
+		str += "<li>"+ item.postdate +"</li>";
+		str += "<li><a href='" + item.link + "' target='_black'>바로가기</a></li>";
+		str += "</ul>";
+	});
+}
+
+</script>
+
+</head>
+<body>
+
+<ul>
+	<li>+ (index + 1) +</li>
+	<li>+ item.title +</li>
+	<li>+ item.description +</li>
+	<li>+ item.bloggername +</li>
+	<li>+ item.bloggerlink +</li>
+	<li>+ item.postdate +</li>
+	<li><a href="' + item.link + "' target='_black'>바로가기</a></li>
+</ul>
+
+
+
+</body>
+</html>

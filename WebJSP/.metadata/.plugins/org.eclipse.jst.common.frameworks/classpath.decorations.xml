@@ -1,0 +1,7 @@
+<classpath>
+  <container id="HelloWorld!org.eclipse.jst.j2ee.internal.web.container">
+    <entry id="C:/neo/WebJSP/HelloWorld/WebContent/WEB-INF/lib/cos.jar">
+      <source-attachment-path>C:/neo/WebJSP/HelloWorld/WebContent/WEB-INF/lib/cos.jar</source-attachment-path>
+    </entry>
+  </container>
+</classpath>

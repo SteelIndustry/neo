@@ -1,6 +1,6 @@
 package model1.board;
 
-public class BoardDTO {
+public class BoardDTO{
 	
 	private String num;
     private String title;
@@ -10,7 +10,7 @@ public class BoardDTO {
     private String visitcount;
     private String name;
 	
-    public String getNum() {
+	public String getNum() {
 		return num;
 	}
 	public void setNum(String num) {

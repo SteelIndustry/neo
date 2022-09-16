@@ -7,14 +7,48 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequestAttributeEvent;
+import javax.servlet.ServletRequestAttributeListener;
+import javax.servlet.ServletRequestEvent;
+import javax.servlet.ServletRequestListener;
+import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import utils.BoardPage;
 
-public class ListController extends HttpServlet {
+//@WebListener
+public class ListController extends HttpServlet implements ServletRequestListener, ServletRequestAttributeListener {
 	private static final long serialVersionUID = 1L;
+	
+	@Override
+	public void requestInitialized(ServletRequestEvent sre) {
+		System.out.println("받아줘 리퀘스트====================");
+	}
+	
+	@Override
+	public void requestDestroyed(ServletRequestEvent sre) {
+		System.out.println("======================리퀘스트 없다.");
+	}
+
+	@Override
+	public void attributeAdded(ServletRequestAttributeEvent srae) {
+		
+		System.out.println(srae.getValue().toString() + " 생겼다 attribute");
+	}
+
+	@Override
+	public void attributeRemoved(ServletRequestAttributeEvent srae) {
+		// TODO Auto-generated method stub
+		ServletRequestAttributeListener.super.attributeRemoved(srae);
+	}
+
+	@Override
+	public void attributeReplaced(ServletRequestAttributeEvent srae) {
+		// TODO Auto-generated method stub
+		ServletRequestAttributeListener.super.attributeReplaced(srae);
+	}
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -68,6 +102,11 @@ public class ListController extends HttpServlet {
 		// 전달할 데이터를 request 영역에 저장 후 List.jsp로 포워드
 		req.setAttribute("boardLists", boardLists);
 		req.setAttribute("map", map);
+		
+		System.out.println("바인드 전이지롱");
+		req.getSession().setAttribute("test", boardLists.get(0));
+		req.getSession().setAttribute("test", boardLists);
+		System.out.println("바인드 후이지롱");
 		req.getRequestDispatcher("/14MVCBoard/List.jsp").forward(req, resp);
 	}
 }

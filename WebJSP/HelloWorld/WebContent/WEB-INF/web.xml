@@ -45,6 +45,17 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	
+	<!-- 
+	<filter>
+		<filter-name>StudyingFilter</filter-name>
+		<filter-class>filter.Filter1</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>StudyingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	-->
+	
 	<context-param>
 		<param-name>OracleDriver</param-name>
 		<param-value>oracle.jdbc.driver.OracleDriver</param-value>
@@ -75,6 +86,12 @@
 	<context-param>
 		<param-name>maxPostSize</param-name>
 		<param-value>1024000</param-value>
+	</context-param>
+	
+	<!-- 15WebSocket -->
+	<context-param>
+		<param-name>CHAT_ADDR</param-name>
+		<param-value>ws://localhost:8090/HelloWorld</param-value>
 	</context-param>
 	
 	<session-config>
