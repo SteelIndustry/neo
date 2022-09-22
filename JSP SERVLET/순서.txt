@@ -1,0 +1,53 @@
+요구사항 분석 - 엑셀
+
+필요한 도구 선정 - 엑셀
+
+필요한 페이지 수 견적 짜기 - 엑셀
+
+페이지 간 상호작용 구성하기 - 다이어리
+
+페이지 양식 구성 - 다이어리
+
+데이터베이스(테이블 구성) 설계
+CREATE TABLE  - BOARD, MEMBER 재사용
+
+
+***** 코딩 *****
+1. DBConn, MemberDAO, MemberDTO, BoardDAO, BoardDTO 작성
+
+2. 클라이언트 뷰 페이지 작성
+- Login.jsp, Join.jsp
+- List.jsp
+- Header.jsp
+- Footer.jsp
+- Detail.jsp
+- Write.jsp
+- Update.jsp
+
+3. 컨트롤러 페이지 ServletController.java 작성
+
+4. DBConn.java 작성
+
+5. 중간 테스트(페이지 출력)
+
+6. *ServiceImpl.java 작성
+
+7. 페이징 처리 구현
+
+8. filter 로그인 적용
+
+9. 세션 이용한 로그인 구현
+
+10. filter+session 이용하여 로그인 화면 전환 구현
+
+11. Connection Pool 구현
+
+12. 검색 조건 유지하기 구현
+
+13. Apache Tiles 라이브러리 이용하여 페이지 수정 
+
+14. Naver XSS 방지 적용
+
+15. OWASP 보안문제 관련 적용
+
+[16. 파일 업로드, 다운로드 구현]
