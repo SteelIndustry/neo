@@ -13,7 +13,7 @@ public class MemberDAO {
 	private PreparedStatement psmt;
 	private ResultSet rs;
 	
-	MemberDAO() 
+	public MemberDAO() 
 	{
 		try {
 			con = DBConn.getConnection();

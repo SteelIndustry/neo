@@ -17,7 +17,7 @@ public class BoardDAO {
 	private PreparedStatement psmt;
 	private ResultSet rs;
 	
-	BoardDAO() 
+	public BoardDAO() 
 	{
 		try {
 			con = DBConn.getConnection();
@@ -33,8 +33,8 @@ public class BoardDAO {
 		int result = 0;
 		
 		String sql = "INSERT INTO BOARD"
-				+ " (NUM, TITLE, CONTENT, ID, POSTDATE, VISITCOUNT, TYPE)"
-				+ " VALUES(SEQ_BOARD_NUM.NEXTVAL(), ?, ?, ?, SYSDATE, 0, ?)";
+				+ " (NUM, TITLE, CONTENT, ID, POSTDATE, VISITCOUNT, TYPE, FILENAME, SAVEDNAME)"
+				+ " VALUES(SEQ_BOARD_NUM.NEXTVAL, ?, ?, ?, SYSDATE, 0, ?, ?, ?)";
 		
 		try {
 			psmt = con.prepareStatement(sql);
@@ -43,6 +43,8 @@ public class BoardDAO {
 			psmt.setString(2, dto.getContent());
 			psmt.setString(3, dto.getId());
 			psmt.setString(4, dto.getType());
+			psmt.setString(5, dto.getFileName());
+			psmt.setString(6, dto.getSavedName());
 			
 			result = psmt.executeUpdate();
 			
@@ -59,7 +61,7 @@ public class BoardDAO {
 		int result = 0;
 		
 		String sql = "UPDATE BOARD"
-				+ " SET TITLE = ?, CONTENT = ?"
+				+ " SET TITLE = ?, CONTENT = ?, FILENAME = ?, SAVEDNAME = ?"
 				+ " WHERE NUM = ?";
 		
 		try {
@@ -67,7 +69,9 @@ public class BoardDAO {
 			
 			psmt.setString(1, dto.getTitle());
 			psmt.setString(2, dto.getContent());
-			psmt.setString(3, dto.getNum());
+			psmt.setString(3, dto.getFileName());
+			psmt.setString(4, dto.getSavedName());
+			psmt.setString(5, dto.getNum());
 			
 			result = psmt.executeUpdate();
 			
@@ -105,7 +109,10 @@ public class BoardDAO {
 	{
 		List<BoardDTO> result = new ArrayList<BoardDTO>();
 		
-		String sql = "SELECT NUM, TITLE, CONTENT, ID, POSTDATE, VISITCOUNT, TYPE FROM BOARD";
+		String sql = "SELECT NUM, TITLE, CONTENT, ID, NAME"
+				+ ", POSTDATE, VISITCOUNT, TYPE, FILENAME, SAVEDNAME"
+				+ " FROM BOARD_INFO"
+				+ " ORDER BY NUM DESC";
 		
 		try {
 			psmt = con.prepareStatement(sql);
@@ -120,9 +127,56 @@ public class BoardDAO {
 				dto.setTitle(rs.getString("title"));
 				dto.setContent(rs.getString("content"));
 				dto.setId(rs.getString("id"));
+				dto.setName(rs.getString("NAME"));
 				dto.setPostdate(rs.getString("postdate"));
 				dto.setVisitcount(rs.getString("visitcount"));
 				dto.setType(rs.getString("type"));
+				dto.setFileName(rs.getString("filename"));
+				dto.setSavedName(rs.getString("savedname"));
+				
+				result.add(dto);
+			}
+			
+			rs.close();
+			psmt.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	public List<BoardDTO> getList(String num)
+	{
+		List<BoardDTO> result = new ArrayList<BoardDTO>();
+		
+		String sql = "SELECT NUM, TITLE, CONTENT, ID, NAME"
+				+ ", POSTDATE, VISITCOUNT, TYPE, FILENAME, SAVEDNAME"
+				+ " FROM BOARD_INFO"
+				+ " WHERE NUM = ?";
+		
+		try {
+			psmt = con.prepareStatement(sql);
+			
+			psmt.setString(1, num);
+			
+			rs = psmt.executeQuery();
+			
+			while(rs.next())
+			{
+				BoardDTO dto = new BoardDTO();
+				
+				dto.setNum(rs.getString("num"));
+				dto.setTitle(rs.getString("title"));
+				dto.setContent(rs.getString("content"));
+				dto.setId(rs.getString("id"));
+				dto.setName(rs.getString("NAME"));
+				dto.setPostdate(rs.getString("postdate"));
+				dto.setVisitcount(rs.getString("visitcount"));
+				dto.setType(rs.getString("type"));
+				dto.setFileName(rs.getString("filename"));
+				dto.setSavedName(rs.getString("savedname"));
 				
 				result.add(dto);
 			}
@@ -145,7 +199,9 @@ public class BoardDAO {
 		Set<Map.Entry<String, String>> entries = keyword.entrySet();
 		int times = entries.size() - 1; // index
 		
-		StringBuffer sb = new StringBuffer("SELECT NUM, TITLE, CONTENT, ID, POSTDATE, VISITCOUNT, TYPE FROM BOARD WHERE ");
+		StringBuffer sb = new StringBuffer("SELECT NUM, TITLE, CONTENT, ID, NAME, POSTDATE"
+				+ ", VISITCOUNT, TYPE, FILENAME, SAVEDNAME"
+				+ " FROM BOARD_INFO WHERE ");
 		
 		// keyword만큼 " like ? or " 첨부. 
 		for (Map.Entry<String, String> e : entries)
@@ -160,6 +216,8 @@ public class BoardDAO {
 			str += "OR ";
 			sb.append(str);
 		}
+		
+		sb.append(" ORDER BY NUM DESC");
 		
 		try {
 			psmt = con.prepareStatement(sb.toString());
@@ -181,9 +239,12 @@ public class BoardDAO {
 				dto.setTitle(rs.getString("title"));
 				dto.setContent(rs.getString("content"));
 				dto.setId(rs.getString("id"));
+				dto.setName(rs.getString("NAME"));
 				dto.setPostdate(rs.getString("postdate"));
 				dto.setVisitcount(rs.getString("visitcount"));
 				dto.setType(rs.getString("type"));
+				dto.setFileName(rs.getString("filename"));
+				dto.setSavedName(rs.getString("savedname"));
 				
 				result.add(dto);
 			}

@@ -2,8 +2,32 @@ package model.board;
 
 
 public class BoardDTO {
-	private String num, title, content, id, postdate, visitcount, type;
-	
+	private String num, title, content, id, postdate, visitcount, type, name, fileName, savedName;
+		
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public String getSavedName() {
+		return savedName;
+	}
+
+	public void setSavedName(String savedName) {
+		this.savedName = savedName;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public String getNum() {
 		return num;
 	}

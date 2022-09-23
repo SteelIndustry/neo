@@ -35,4 +35,13 @@
 		<servlet-name>WebController</servlet-name>
 		<url-pattern>*.do</url-pattern>
 	</servlet-mapping>
+	
+	<context-param>
+		<param-name>maxPostSize</param-name>
+		<param-value>102400</param-value>
+	</context-param>
+	<context-param>
+		<param-name>saveDir</param-name>
+		<param-value>/WEB-INF/Uploads</param-value>
+	</context-param>
 </web-app>

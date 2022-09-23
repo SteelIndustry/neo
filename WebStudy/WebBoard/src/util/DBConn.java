@@ -23,7 +23,6 @@ public class DBConn {
 		} catch (NamingException e) {
 			e.printStackTrace();
 		}
-		System.out.println("연결");
 		return ds.getConnection();
 	}
 }

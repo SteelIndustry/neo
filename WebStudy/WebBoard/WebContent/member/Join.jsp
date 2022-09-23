@@ -14,9 +14,20 @@ $(function() {
 		$('span:visible').css('display', 'none');
 		
 		// 아이디 중복 검사
-		var checkId = false;
-		if (!checkId)
-			$("#errIdMsg").css('display', 'block');
+		$('#searchBtn').click(function() {
+			$.ajax({
+				url : "duplicationcheck.do"	// 요청 URL
+				, type : "get"					
+				, data : {						
+					id : $('input[name="id"]').val()	
+				}
+				, success : function(data) {
+					if(data) {
+						$("#errIdMsg").css('display', 'block');
+					}
+				}
+			});
+		});
 		
 		// 비밀번호 정확히 입력되었는지 확인
 		var pwds = $("input[name='password']");
