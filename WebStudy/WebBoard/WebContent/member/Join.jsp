@@ -13,40 +13,66 @@ $(function() {
 		// 에러 메시지 초기화
 		$('span:visible').css('display', 'none');
 		
-		// 아이디 중복 검사
-		$('#searchBtn').click(function() {
-			$.ajax({
-				url : "duplicationcheck.do"	// 요청 URL
-				, type : "get"					
-				, data : {						
-					id : $('input[name="id"]').val()	
-				}
-				, success : function(data) {
-					if(data) {
-						$("#errIdMsg").css('display', 'block');
-					}
-				}
-			});
-		});
+		if ($('input[name="id"]').val() == '')
+		{
+			alert("아이디 입력해주세요.")
+			return;
+		}
+		if ($('input[name="name"]').val() == '')
+		{
+			alert("이름 입력해주세요.")
+			return;
+		}
 		
-		// 비밀번호 정확히 입력되었는지 확인
 		var pwds = $("input[name='password']");
 		
-		if (pwds[0].value != pwds[1].value
-				|| pwds[0].value == "")
+		if (pwds[0].value == '' || pwds[1].value == '')
+		{
+			alert("비밀번호 입력해주세요.")
+			return;
+		}
+		
+		// 비밀번호 정확히 입력되었는지 확인
+		if (pwds[0].value != pwds[1].value)
+		{
 			$("#errPwdMsg").css('display', 'block');
+			retur;
+		}
+		$("#joinForm").submit();
+	});
+	
+	// 아이디 중복 검사
+	$('#searchBtn').on("click", function() {
+		// 에러 메시지 초기화
+		$('span:visible').css('display', 'none');
+		
+		var id = $('input[name="id"]').val();
+		var data = "id="+id;
+		
+		$.ajax({
+			type : "GET"
+			, url : "duplicationcheck.do"	// 요청 URL
+			, data : data
+			, dataType : "text"
+			, success : function(data) {
+				data = Number(data);
+				
+				if(data > 0) {
+					$("#errIdMsg").css('display', 'block');
+				}
+			}
+		});
 	});
 })
 </script>
 </head>
 <body>
-<form action="" method="post">
-
+<form id="joinForm" action="joinprocess.do" method="post">
 	<table>
 		<tr>
 			<th>ID</th>
 			<td><input type="text" name="id" placeholder="ID 입력"/></td>
-			<td><button type="button">아이디 중복 검사</button></td>
+			<td><button id="searchBtn" type="button">아이디 중복 검사</button></td>
 			<td><span id="errIdMsg" style="color: red; display: none;">중복된 아이디입니다.</span></td>
 		</tr>
 		<tr>
@@ -56,17 +82,17 @@ $(function() {
 		<tr>
 			<th>비밀번호</th>
 			<td><input type="password" name="password" placeholder="비밀번호 입력"/></td>
-			<td><span id="errPwdMsg" style="color: red; display: none;" >비밀번호가 틀렸습니다.</span></td>
+			<td><span id="errPwdMsg" style="color: red; display: none;" >두 비밀번호가 일치하지 않습니다.</span></td>
 		</tr>
 		<tr>
-			<th></th>
+			<th>재입력</th>
 			<td><input type="password" name="password" placeholder="비밀번호 재입력"/></td>
 		</tr>
 	</table>
 	<br />
 	<button id="submitBtn" type="button">확인</button>
 	<button type="reset">리셋</button>
-	<button type="button">취소</button>	
+	<button type="button" onclick="location.href='login.do';">취소</button>	
 </form>
 </body>
 </html>

@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import model.IService;
 import util.FileUtil;
-import util.UploadDir;
+import util.Setting;
 
 public class DownloadService implements IService {
 
@@ -14,7 +14,7 @@ public class DownloadService implements IService {
 		String fileName = request.getParameter("fileName");
 		String savedName = request.getParameter("savedName");
 		
-		FileUtil.download(request, response, UploadDir.getSaveDir(), savedName, fileName);
+		FileUtil.download(request, response, Setting.getSaveDir(), savedName, fileName);
 		
 		return "";
 	}

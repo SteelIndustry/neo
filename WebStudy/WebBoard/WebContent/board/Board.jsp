@@ -1,7 +1,12 @@
+<%@page import="model.member.MemberDTO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"
     trimDirectiveWhitespaces="true"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%
+	System.out.println("name: " + session.getAttribute("name"));
+	System.out.println("id: " + session.getAttribute("id"));
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,22 +14,39 @@
 <title>자유 게시판</title>
 <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
 <style>a{text-decoration:none;}</style>
+<script>
+$(function() {
+	$("#searchBtn").on("click", function() {
+		if ( $("input[name='keyword']").val().trim() == '')
+			return;
+		else
+		{
+			$("#searchForm").submit();
+		}
+	});
+	
+	$("#resetBtn").on("click", function() {
+		location.href="board.do";
+	});
+	
+})</script>
 </head>
 <body>
 	<h2>게시판 - 목록 보기</h2>
 	
 	<!-- 검색 폼 -->
-	<form method="get">
+	<form method="get" id="searchForm">
 	<table border="1" style="width:90%;">
 	<tr>
 		<td align="right">
-			<select name="searchField" id="">
-				<option value="title">제목</option>
-				<option value="content">내용</option>
-				<option value="all">제목+내용</option>
-			</select>
-			<input type="text" name="keyword" />
-			<input type="submit" value="검색하기" />
+			<button id="resetBtn" type="button">검색 초기화</button>		
+			<label><input type="checkbox" name="title" value="title"
+				   <c:if test="${param.title != null}">checked</c:if>/>제목</label>
+			<label><input type="checkbox" name="content" value="content"
+				   <c:if test="${param.content != null}">checked="checked"</c:if>/>내용</label>
+			<input type="text" name="keyword"
+				<c:if test="${param.keyword != null}">value="${param.keyword }"</c:if>/>
+			<button id="searchBtn" type="button">검색하기</button>
 		</td>
 	</tr>
 	</table>
@@ -71,7 +93,7 @@
 	<!-- 하단 메뉴(바로가기, 글쓰기) -->
 	<table border="1" style="width:90%;">
 		<tr align="center">
-			<td>페이징 자리</td>
+			<td><jsp:include page="/layout/Paging.jsp"/></td>
 			<td style="width:100;">
 				<button type="button" onclick="location.href='write.do';">글쓰기</button>
 			</td>

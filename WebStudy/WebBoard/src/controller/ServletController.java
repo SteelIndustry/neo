@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import model.IService;
-import util.UploadDir;
+import util.Setting;
 
 @WebServlet
 public class ServletController extends HttpServlet {
@@ -30,10 +30,16 @@ public class ServletController extends HttpServlet {
 	public void init() throws ServletException {
 		super.init();
 		
+		// 기본 세팅
+		ServletContext application = getServletContext();
+		
 		// 파일 업로드/다운로드 용
-		ServletContext application = getServletContext(); 
-		UploadDir.setMaxPostSize(application.getInitParameter("maxPostSize"));
-		UploadDir.setSaveDir(application.getRealPath(application.getInitParameter("saveDir")));
+		Setting.setMaxPostSize(application.getInitParameter("maxPostSize"));
+		Setting.setSaveDir(application.getRealPath(application.getInitParameter("saveDir")));
+		
+		// 페이징 용
+		Setting.setPostsPerPage(application.getInitParameter("POSTS_PER_PAGE"));
+		Setting.setPagesPerBlock(application.getInitParameter("PAGES_PER_BLOCK"));
 		
 		// Properties 호출
 		// Address.properties 는 Service 클래스 주소를 담고 있음
@@ -69,15 +75,15 @@ public class ServletController extends HttpServlet {
 	{
 		//request.setCharacterEncoding("UTF-8");
 		
+		// 실제 요청 주소 얻기 위해 식별 주소 추출
 		String uri = request.getRequestURI();
 		String path = request.getContextPath();
 		
 		String command = uri.substring(path.length());
-		
 		System.out.println(command);
 		
 		IService service = null;
-		
+		// 동적으로 클래스 인스턴스 획득
 		try {
 			Class<?> clazz = Class.forName(prop.getProperty(command));
 			Constructor<?> constructor = clazz.getConstructor();
@@ -98,8 +104,10 @@ public class ServletController extends HttpServlet {
 			e.printStackTrace();
 		}
 		
+		// 해당 주소의 service 실행
 		String url = service.execute(request, response);
 		
+		// return 값에 따라 forward, redirect, 아무것도 하지 않음 결정.
 		if (url.contains("redirect"))
 		{
 			url = url.split("/")[1];

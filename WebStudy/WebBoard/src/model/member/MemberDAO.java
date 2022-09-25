@@ -79,10 +79,10 @@ public class MemberDAO {
 	}
 	
 	// 닉네임 중복 검사
-	public boolean getList(String name)
+	public String getList(String name)
 	{
-		boolean result = false;
-		String sql = "SELECT COUNT(*) AS COUNT FROM MEMBER WHERE NAME = ?";
+		String result = "1";
+		String sql = "SELECT COUNT(*) as COUNT FROM MEMBER WHERE ID = ?";
 		
 		try {
 			psmt = con.prepareStatement(sql);
@@ -91,7 +91,10 @@ public class MemberDAO {
 						
 			rs = psmt.executeQuery();
 			
-			result = rs.next();
+			if (rs.next())
+			{
+				result = rs.getString(1);
+			}
 			
 			rs.close();
 			psmt.close();
