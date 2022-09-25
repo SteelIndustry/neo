@@ -1,5 +1,7 @@
 package model.member.service;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -13,9 +15,13 @@ public class DuplicationCheckService implements IService{
 		
 		MemberDAO dao = new MemberDAO();
 		
-		boolean result = dao.getList(request.getParameter("name"));
+		String result = dao.getList(request.getParameter("id"));
 		
-		request.setAttribute("result", result);
+		try {
+			response.getWriter().print(result);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		return "";
 	}

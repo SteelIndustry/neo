@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Context>
 <!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor 
 	license agreements. See the NOTICE file distributed with this work for additional 
 	information regarding copyright ownership. The ASF licenses this file to 
@@ -20,19 +21,10 @@
 	<!-- Uncomment this to disable session persistence across Tomcat restarts -->
 	<!-- <Manager pathname="" /> -->
 
-	<Resource
-		auth = "Container"
-		driverClassName = "oracle.jdbc.driver.OracleDriver"
-		url = "jdbc:oracle:thin:@localhost:1521:xe"
-		username = "scott"
-		password = "tiger"
-		name = "board_dbcp"
-		type="javax.sql.DataSource"
-		initialSize="0" 
-		minIdle="5"
-		maxWaitMillis = "5000"
-		maxIdle="20" 
-		maxTotal="20" 
-		
-	/>
+	<Resource auth="Container"
+		driverClassName="oracle.jdbc.driver.OracleDriver"
+		url="jdbc:oracle:thin:@localhost:1521:xe" username="scott"
+		password="tiger" name="board_dbcp" type="javax.sql.DataSource"
+		initialSize="0" minIdle="5" maxWaitMillis="5000" maxIdle="20"
+		maxTotal="20" />
 </Context>

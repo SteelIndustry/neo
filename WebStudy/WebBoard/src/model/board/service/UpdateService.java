@@ -13,7 +13,7 @@ import model.IService;
 import model.board.BoardDAO;
 import model.board.BoardDTO;
 import util.FileUtil;
-import util.UploadDir;
+import util.Setting;
 
 public class UpdateService implements IService {
 
@@ -23,9 +23,9 @@ public class UpdateService implements IService {
 		BoardDAO dao = new BoardDAO();
 		BoardDTO dto = new BoardDTO();
 		
-		String saveDir = UploadDir.getSaveDir();
+		String saveDir = Setting.getSaveDir();
 		
-		MultipartRequest mr = FileUtil.uploadFile(request, saveDir, UploadDir.getMaxPostSize());
+		MultipartRequest mr = FileUtil.uploadFile(request, saveDir, Setting.getMaxPostSize());
 		
 		String prevFileName = mr.getParameter("prevFileName");
 		String preveSavedName = mr.getParameter("prevSavedName");
