@@ -12,15 +12,22 @@ import java.util.Properties;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.tiles.Attribute;
+import org.apache.tiles.AttributeContext;
+import org.apache.tiles.TilesContainer;
+import org.apache.tiles.access.TilesAccess;
+import org.apache.tiles.request.ApplicationContext;
+import org.apache.tiles.request.Request;
+import org.apache.tiles.request.servlet.ServletRequest;
+import org.apache.tiles.request.servlet.ServletUtil;
+
 import model.IService;
 import util.Setting;
 
-@WebServlet
 public class ServletController extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
@@ -105,19 +112,34 @@ public class ServletController extends HttpServlet {
 		}
 		
 		// 해당 주소의 service 실행
-		String url = service.execute(request, response);
+		String uriPath = service.execute(request, response);
 		
 		// return 값에 따라 forward, redirect, 아무것도 하지 않음 결정.
-		if (url.contains("redirect"))
+		if (uriPath.contains("redirect"))
 		{
-			url = url.split("/")[1];
-			response.sendRedirect(url);
+			uriPath = uriPath.split("/")[1];
+			response.sendRedirect(uriPath);
 		}
-		else if (url.equals(""))
-		{}
-		else
+		else if (!uriPath.equals(""))
 		{
-			request.getRequestDispatcher(url).forward(request, response);
+			if (uriPath.contains("board/"))
+			{
+				// tiles
+				ApplicationContext context = ServletUtil.getApplicationContext(request.getServletContext());
+				TilesContainer container = TilesAccess.getContainer(context);
+				
+				Request tilesRequest = new ServletRequest(container.getApplicationContext(), request, response);
+				AttributeContext attriContext = container.startContext(tilesRequest);
+				
+				attriContext.putAttribute("title", new Attribute("자유 게시판"));
+				attriContext.putAttribute("body", new Attribute("/" + uriPath));
+				
+				container.render("board", tilesRequest);
+			}
+			else
+			{
+				request.getRequestDispatcher(uriPath).forward(request, response);
+			}
 		}
 	}
 }

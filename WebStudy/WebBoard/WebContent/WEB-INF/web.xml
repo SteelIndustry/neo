@@ -13,6 +13,29 @@
 		<welcome-file>default.jsp</welcome-file>
 	</welcome-file-list>
 	
+	<!-- 상수 -->
+	<!-- 업로드 크기, 업로드 장소 -->
+	<context-param>
+		<param-name>maxPostSize</param-name>
+		<param-value>102400</param-value>
+	</context-param>
+	<context-param>
+		<param-name>saveDir</param-name>
+		<param-value>/WEB-INF/Uploads</param-value>
+	</context-param>
+	
+	<!-- 페이징 관련 -->
+	<!-- 한 페이지 출력 게시물 수, 한 화면에 출력할 페이지 번호 수 -->
+	<context-param>
+		<param-name>POSTS_PER_PAGE</param-name>
+		<param-value>10</param-value>
+	</context-param>
+	<context-param>
+		<param-name>PAGES_PER_BLOCK</param-name>
+		<param-value>5</param-value>
+	</context-param>
+	
+	<!-- 인코딩 -->
 	<filter>
 		<filter-name>SetCharEncoding</filter-name>
 		<filter-class>org.apache.catalina.filters.SetCharacterEncodingFilter</filter-class>
@@ -27,6 +50,25 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	
+	<!-- tiles -->
+	<listener>
+	    <listener-class>org.apache.tiles.extras.complete.CompleteAutoloadTilesListener</listener-class>
+	</listener>
+	
+	<!-- 로그인 요구 -->
+	<filter>
+		<filter-name>CheckLogin</filter-name>
+		<filter-class>util.LoginFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>CheckLogin</filter-name>
+		<url-pattern>/detail.do</url-pattern>
+		<url-pattern>/write.do</url-pattern>
+		<url-pattern>/edit.do</url-pattern>
+		<url-pattern>/delete.do</url-pattern>
+	</filter-mapping>
+	
+	<!-- 컨트롤러 -->
 	<servlet>
 		<servlet-name>WebController</servlet-name>
 		<servlet-class>controller.ServletController</servlet-class>
@@ -35,22 +77,4 @@
 		<servlet-name>WebController</servlet-name>
 		<url-pattern>*.do</url-pattern>
 	</servlet-mapping>
-	
-	<context-param>
-		<param-name>maxPostSize</param-name>
-		<param-value>102400</param-value>
-	</context-param>
-	<context-param>
-		<param-name>saveDir</param-name>
-		<param-value>/WEB-INF/Uploads</param-value>
-	</context-param>
-	
-	<context-param>
-		<param-name>POSTS_PER_PAGE</param-name>
-		<param-value>10</param-value>
-	</context-param>
-	<context-param>
-		<param-name>PAGES_PER_BLOCK</param-name>
-		<param-value>5</param-value>
-	</context-param>
 </web-app>

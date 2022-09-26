@@ -1,5 +1,6 @@
 package model.member.service;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,7 +26,23 @@ public class LoginProcessService implements IService{
 			request.getSession().setAttribute("id", dto.getId());
 			request.getSession().setAttribute("name", dto.getName());
 			
-			return "redirect/board.do";
+			String url = "redirect/board.do";
+			
+			// 원래 이동하려던 페이지가 있을 경우
+			Cookie[] cookies = request.getCookies();
+			for (Cookie c : cookies)
+			{
+				String key = c.getName();
+				if (key.equals("purpose"))
+				{
+					url = c.getValue();
+					url = "redirect/" + url;
+					c.setMaxAge(0);
+					response.addCookie(c);				
+				}
+			}
+			
+			return url;
 		}
 		request.setAttribute("errMsg", "아이디 혹은 비밀번호를 잘못 입력하였습니다.");
 		return "login.do";

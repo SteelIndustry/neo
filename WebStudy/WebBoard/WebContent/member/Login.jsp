@@ -34,6 +34,10 @@ $(function() {
 			$("#loginForm").submit();	
 		}
 	});
+	
+	$("#backBtn").on("click", function() {
+		location.href="board.do";
+	});
 })
 </script>
 </head>
@@ -52,7 +56,7 @@ $(function() {
 			<td></td>
 			<td>
 				<button id="submitBtn" type="button">확인</button>
-				<button type="button">취소</button>
+				<button id="backBtn" type="button">취소</button>
 				<button type="button" onclick="location.href='join.do';">회원가입</button>
 			</td>
 		</tr>

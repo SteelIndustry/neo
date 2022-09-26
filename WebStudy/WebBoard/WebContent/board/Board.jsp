@@ -34,6 +34,8 @@ $(function() {
 <body>
 	<h2>게시판 - 목록 보기</h2>
 	
+	<%-- <jsp:include page="/layout/Header.jsp"/> --%>
+	
 	<!-- 검색 폼 -->
 	<form method="get" id="searchForm">
 	<table border="1" style="width:90%;">
@@ -91,13 +93,19 @@ $(function() {
 	</table>
 	
 	<!-- 하단 메뉴(바로가기, 글쓰기) -->
+	<br />
+	<div style="width:90%;" align="right">
+		<button type="button" onclick="location.href='write.do';">글쓰기</button>
+	</div>
+	
+	<%-- 
 	<table border="1" style="width:90%;">
 		<tr align="center">
 			<td><jsp:include page="/layout/Paging.jsp"/></td>
 			<td style="width:100;">
-				<button type="button" onclick="location.href='write.do';">글쓰기</button>
+				
 			</td>
 		</tr>
-	</table>
+	</table> --%>
 </body>
 </html>
