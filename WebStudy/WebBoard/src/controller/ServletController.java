@@ -16,22 +16,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.tiles.Attribute;
-import org.apache.tiles.AttributeContext;
-import org.apache.tiles.TilesContainer;
-import org.apache.tiles.access.TilesAccess;
-import org.apache.tiles.request.ApplicationContext;
-import org.apache.tiles.request.Request;
-import org.apache.tiles.request.servlet.ServletRequest;
-import org.apache.tiles.request.servlet.ServletUtil;
-
 import model.IService;
+import util.RenderingTiles;
 import util.Setting;
 
 public class ServletController extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	private Properties prop; // URL 매칭 주소
+	private final String basicPath = "WEB-INF/view/";
+	private Properties prop; // URL - Service 매칭
+	private Properties tilesProp;
+	private RenderingTiles rendering;
 	
 	@Override
 	public void init() throws ServletException {
@@ -47,6 +42,10 @@ public class ServletController extends HttpServlet {
 		// 페이징 용
 		Setting.setPostsPerPage(application.getInitParameter("POSTS_PER_PAGE"));
 		Setting.setPagesPerBlock(application.getInitParameter("PAGES_PER_BLOCK"));
+		
+		// tiles 용
+		rendering = new RenderingTiles();
+		tilesProp = rendering.getProp();
 		
 		// Properties 호출
 		// Address.properties 는 Service 클래스 주소를 담고 있음
@@ -85,7 +84,7 @@ public class ServletController extends HttpServlet {
 		// 실제 요청 주소 얻기 위해 식별 주소 추출
 		String uri = request.getRequestURI();
 		String path = request.getContextPath();
-		
+				
 		String command = uri.substring(path.length());
 		System.out.println(command);
 		
@@ -122,8 +121,19 @@ public class ServletController extends HttpServlet {
 		}
 		else if (!uriPath.equals(""))
 		{
+			if (tilesProp.getProperty(uriPath) != null)
+			{
+				rendering.render(request, response, uriPath);
+			}
+			else
+			{
+				request.getRequestDispatcher(basicPath+uriPath).forward(request, response);
+			}
+			
+			/*
 			if (uriPath.contains("board/"))
 			{
+				
 				// tiles
 				ApplicationContext context = ServletUtil.getApplicationContext(request.getServletContext());
 				TilesContainer container = TilesAccess.getContainer(context);
@@ -133,13 +143,12 @@ public class ServletController extends HttpServlet {
 				
 				attriContext.putAttribute("title", new Attribute("자유 게시판"));
 				attriContext.putAttribute("body", new Attribute("/" + uriPath));
+				//attriContext.putAttribute("footer", new Attribute(""));
 				
 				container.render("board", tilesRequest);
+				
 			}
-			else
-			{
-				request.getRequestDispatcher(uriPath).forward(request, response);
-			}
+			*/
 		}
 	}
 }
