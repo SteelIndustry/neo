@@ -29,8 +29,6 @@ public class LoginFilter implements Filter{
 			if (query != null)
 				url = url + "?" + query;
 			
-			System.out.println(url);
-			
 			Cookie cookie = new Cookie("purpose", url);
 			response.addCookie(cookie);
 						
