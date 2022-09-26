@@ -11,7 +11,6 @@ public class DetailService implements IService {
 
 	@Override
 	public String execute(HttpServletRequest request, HttpServletResponse response) {
-		
 		BoardDAO dao = new BoardDAO();
 		
 		BoardDTO dto = dao.getList(request.getParameter("num")).get(0);
