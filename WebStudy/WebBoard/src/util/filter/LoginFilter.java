@@ -1,4 +1,4 @@
-package util;
+package util.filter;
 
 import java.io.IOException;
 
@@ -8,7 +8,6 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -29,9 +28,8 @@ public class LoginFilter implements Filter{
 			if (query != null)
 				url = url + "?" + query;
 			
-			Cookie cookie = new Cookie("purpose", url);
-			response.addCookie(cookie);
-						
+			request.setAttribute("url", url);
+			
 			RequestDispatcher dispatcher = request.getRequestDispatcher("login.do");
 			dispatcher.forward((ServletRequest) request, (ServletResponse) response);
 			

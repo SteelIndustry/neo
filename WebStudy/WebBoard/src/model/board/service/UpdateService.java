@@ -14,13 +14,21 @@ import model.board.BoardDAO;
 import model.board.BoardDTO;
 import util.FileUtil;
 import util.Setting;
+import util.TableName;
 
 public class UpdateService implements IService {
 
 	@Override
 	public String execute(HttpServletRequest request, HttpServletResponse response) {
+		String tableName; // 참조 테이블 이름
 		
-		BoardDAO dao = new BoardDAO();
+		// 게시판 타입에 따른 테이블 이름
+		String type = request.getParameter("type") != null ? request.getParameter("type") : "free"; 
+		tableName = TableName.getTableName(type);
+		
+		// DAO 설정
+		BoardDAO dao = new BoardDAO(tableName);
+		
 		BoardDTO dto = new BoardDTO();
 		
 		String saveDir = Setting.getSaveDir();
@@ -69,7 +77,7 @@ public class UpdateService implements IService {
 		
 		dao.close();
 		
-		return "redirect/board.do";
+		return "redirect/board.do?type="+type;
 	}
 	
 }

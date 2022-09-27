@@ -25,7 +25,7 @@
 			${i }
 		</c:when>
 		<c:otherwise>
-			<a href="board.do?pageNum=${i }
+			<a href="board.do?pageNum=${i }&type=${type }
 				${query }
 			">${i }</a>
 		</c:otherwise>

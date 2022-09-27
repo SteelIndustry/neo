@@ -28,7 +28,7 @@
 <body>
 <h2>게시판 - 수정하기(Edit)</h2>
 <form name="writeFrm" method="post" 
-	enctype="multipart/form-data" action="update.do" 
+	enctype="multipart/form-data" action="update.do?type=${param.type }" 
 	onsubmit="return validateForm(this);">
 
 <input type="hidden" name="num" value="${dto.num }" />

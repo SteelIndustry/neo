@@ -43,6 +43,12 @@ $(function() {
 </head>
 <body>
 <form id="loginForm" action="loginprocess.do" method="post">
+	<c:if test="${url != null }">
+	<input type="hidden" name="url" value="${url }"/>
+	</c:if>
+	<c:if test="${param.type != null }">
+	<input type="hidden" name="type" value="${param.type }"/>
+	</c:if>
 	<table>
 		<tr>
 			<th>ID</th>

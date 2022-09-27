@@ -54,9 +54,11 @@
 	<!-- 하단 메뉴(버튼) -->
 	<tr>
 		<td colspan="4" align="center">
-			<button type="button" onclick="location.href='edit.do?num=${param.num}';">수정하기</button>
-			<button type="button" onclick="location.href='delete.do?num=${param.num}';">삭제하기</button>
-			<button type="button" onclick="location.href='board.do';">목록 바로가기</button>
+			<c:if test="${dto.id == sessionScope.id }">
+			<button type="button" onclick="location.href='edit.do?num=${param.num}&type=${param.type }';">수정하기</button>
+			<button type="button" onclick="location.href='delete.do?num=${param.num}&type=${param.type }';">삭제하기</button>
+			</c:if>
+			<button type="button" onclick="location.href='board.do?type=${param.type}';">목록 바로가기</button>
 		</td>
 	</tr>
 </table>

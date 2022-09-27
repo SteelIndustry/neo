@@ -10,6 +10,8 @@ public class WriteService implements IService {
 	@Override
 	public String execute(HttpServletRequest request, HttpServletResponse response) {
 		
+		request.setAttribute("type", request.getParameter("type"));
+		
 		return "board/Write.jsp";
 	}
 	

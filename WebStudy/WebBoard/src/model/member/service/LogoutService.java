@@ -12,6 +12,8 @@ public class LogoutService implements IService{
 		
 		request.getSession().invalidate();
 		
-		return "redirect/board.do";
+		String type = request.getParameter("type") != null ? request.getParameter("type") : "free";
+		
+		return "redirect/board.do?type=" + type;
 	}
 }

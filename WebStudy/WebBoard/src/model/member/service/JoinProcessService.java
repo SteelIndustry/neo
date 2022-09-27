@@ -11,7 +11,6 @@ public class JoinProcessService implements IService{
 
 	@Override
 	public String execute(HttpServletRequest request, HttpServletResponse response) {
-		
 		MemberDAO dao = new MemberDAO();
 		
 		MemberDTO dto = new MemberDTO();
@@ -27,7 +26,9 @@ public class JoinProcessService implements IService{
 		else
 			System.out.println("회원가입 실패");
 		
-		return "redirect/login.do";
+		String type = request.getParameter("type");
+		
+		return "redirect/login.do?type="+type;
 	}
 
 }

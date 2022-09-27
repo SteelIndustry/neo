@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import model.IService;
 import util.RenderingTiles;
 import util.Setting;
+import util.TableName;
 
 public class ServletController extends HttpServlet {
 
@@ -42,6 +43,9 @@ public class ServletController extends HttpServlet {
 		// 페이징 용
 		Setting.setPostsPerPage(application.getInitParameter("POSTS_PER_PAGE"));
 		Setting.setPagesPerBlock(application.getInitParameter("PAGES_PER_BLOCK"));
+		
+		// 타입별 테이블 이름
+		TableName.setTableNames();
 		
 		// tiles 용
 		rendering = new RenderingTiles();
@@ -79,8 +83,6 @@ public class ServletController extends HttpServlet {
 	
 	private void doGetPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
-		//request.setCharacterEncoding("UTF-8");
-		
 		// 실제 요청 주소 얻기 위해 식별 주소 추출
 		String uri = request.getRequestURI();
 		String path = request.getContextPath();
@@ -112,7 +114,7 @@ public class ServletController extends HttpServlet {
 		
 		// 해당 주소의 service 실행
 		String uriPath = service.execute(request, response);
-		
+	
 		// return 값에 따라 forward, redirect, 아무것도 하지 않음 결정.
 		if (uriPath.contains("redirect"))
 		{
@@ -129,26 +131,6 @@ public class ServletController extends HttpServlet {
 			{
 				request.getRequestDispatcher(basicPath+uriPath).forward(request, response);
 			}
-			
-			/*
-			if (uriPath.contains("board/"))
-			{
-				
-				// tiles
-				ApplicationContext context = ServletUtil.getApplicationContext(request.getServletContext());
-				TilesContainer container = TilesAccess.getContainer(context);
-				
-				Request tilesRequest = new ServletRequest(container.getApplicationContext(), request, response);
-				AttributeContext attriContext = container.startContext(tilesRequest);
-				
-				attriContext.putAttribute("title", new Attribute("자유 게시판"));
-				attriContext.putAttribute("body", new Attribute("/" + uriPath));
-				//attriContext.putAttribute("footer", new Attribute(""));
-				
-				container.render("board", tilesRequest);
-				
-			}
-			*/
 		}
 	}
 }

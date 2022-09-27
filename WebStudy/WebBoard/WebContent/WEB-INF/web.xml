@@ -58,12 +58,23 @@
 	<!-- 로그인 요구 -->
 	<filter>
 		<filter-name>CheckLogin</filter-name>
-		<filter-class>util.LoginFilter</filter-class>
+		<filter-class>util.filter.LoginFilter</filter-class>
 	</filter>
 	<filter-mapping>
 		<filter-name>CheckLogin</filter-name>
 		<url-pattern>/detail.do</url-pattern>
 		<url-pattern>/write.do</url-pattern>
+		<url-pattern>/edit.do</url-pattern>
+		<url-pattern>/delete.do</url-pattern>
+	</filter-mapping>
+	
+	<!-- 자기 글만 수정/삭제 가능 -->
+	<filter>
+		<filter-name>CheckWriter</filter-name>
+		<filter-class>util.filter.WriterFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>CheckWriter</filter-name>
 		<url-pattern>/edit.do</url-pattern>
 		<url-pattern>/delete.do</url-pattern>
 	</filter-mapping>

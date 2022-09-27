@@ -15,6 +15,8 @@ public class BoardDAO {
 	private Connection con;
 	private PreparedStatement psmt;
 	private ResultSet rs;
+	private String tableName;
+	private String viewName;
 	
 	public BoardDAO() 
 	{
@@ -27,13 +29,26 @@ public class BoardDAO {
 		rs = null;
 	}
 	
+	public BoardDAO(String name)
+	{
+		try {
+			con = DBConn.getConnection();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		psmt = null;
+		rs = null;
+		tableName = name;
+		viewName = name + "_INFO";
+	}
+	
 	public int insert(BoardDTO dto)
 	{
 		int result = 0;
 		
-		String sql = "INSERT INTO BOARD"
-				+ " (NUM, TITLE, CONTENT, ID, POSTDATE, VISITCOUNT, TYPE, FILENAME, SAVEDNAME)"
-				+ " VALUES(SEQ_BOARD_NUM.NEXTVAL, ?, ?, ?, SYSDATE, 0, ?, ?, ?)";
+		String sql = "INSERT INTO " + tableName
+				+ " (NUM, TITLE, CONTENT, ID, POSTDATE, VISITCOUNT, FILENAME, SAVEDNAME)"
+				+ " VALUES(SEQ_"+tableName+"_NUM.NEXTVAL, ?, ?, ?, SYSDATE, 0, ?, ?)";
 		
 		try {
 			psmt = con.prepareStatement(sql);
@@ -41,9 +56,8 @@ public class BoardDAO {
 			psmt.setString(1, dto.getTitle());
 			psmt.setString(2, dto.getContent());
 			psmt.setString(3, dto.getId());
-			psmt.setString(4, dto.getType());
-			psmt.setString(5, dto.getFileName());
-			psmt.setString(6, dto.getSavedName());
+			psmt.setString(4, dto.getFileName());
+			psmt.setString(5, dto.getSavedName());
 			
 			result = psmt.executeUpdate();
 			
@@ -59,7 +73,7 @@ public class BoardDAO {
 	{
 		int result = 0;
 		
-		String sql = "UPDATE BOARD"
+		String sql = "UPDATE " +tableName
 				+ " SET TITLE = ?, CONTENT = ?, FILENAME = ?, SAVEDNAME = ?"
 				+ " WHERE NUM = ?";
 		
@@ -86,7 +100,7 @@ public class BoardDAO {
 	{
 		int result = 0;
 		
-		String sql = "DELETE FROM BOARD WHERE NUM = ?";
+		String sql = "DELETE FROM "+tableName+" WHERE NUM = ?";
 		
 		try {
 			psmt = con.prepareStatement(sql);
@@ -109,8 +123,8 @@ public class BoardDAO {
 		List<BoardDTO> result = new ArrayList<BoardDTO>();
 		
 		String sql = "SELECT NUM, TITLE, CONTENT, ID, NAME"
-				+ ", POSTDATE, VISITCOUNT, TYPE, FILENAME, SAVEDNAME"
-				+ " FROM BOARD_INFO"
+				+ ", POSTDATE, VISITCOUNT, FILENAME, SAVEDNAME"
+				+ " FROM "+viewName
 				+ " WHERE NUM = ?";
 		
 		try {
@@ -131,7 +145,6 @@ public class BoardDAO {
 				dto.setName(rs.getString("NAME"));
 				dto.setPostdate(rs.getString("postdate"));
 				dto.setVisitcount(rs.getString("visitcount"));
-				dto.setType(rs.getString("type"));
 				dto.setFileName(rs.getString("filename"));
 				dto.setSavedName(rs.getString("savedname"));
 				
@@ -148,6 +161,7 @@ public class BoardDAO {
 		return result;
 	}
 	
+	
 	public List<BoardDTO> getList(Map<String, String> info)
 	{
 		List<BoardDTO> result = new ArrayList<BoardDTO>();
@@ -156,10 +170,10 @@ public class BoardDAO {
 		int count = 0; // 파라미터 count 용
 		
 		String sql = "SELECT NUM, TITLE, CONTENT, ID, NAME, POSTDATE, VISITCOUNT"
-				        + ", TYPE, FILENAME, SAVEDNAME"
+				        + ", FILENAME, SAVEDNAME"
 				  + " FROM"
 				  + " ( SELECT BI.*, ROW_NUMBER() OVER(ORDER BY NUM DESC) RN "
-				    + " FROM BOARD_INFO BI ";
+				    + " FROM "+viewName+" BI ";
 		
 		StringBuffer sb = new StringBuffer();
 		sb.append(sql);
@@ -167,16 +181,16 @@ public class BoardDAO {
 		if (keyword != null)
 		{
 			// where 절 설정용
-			String[] keywords = info.get("keywords").split(",");
-			count = keywords.length; // 검색 키워드 존재할 경우 count에 값 부여
+			String[] category = info.get("category").split(",");
+			count = category.length; // 검색 키워드 존재할 경우 count에 값 부여
 			
 			sb.append("WHERE ");
 			
 			// keyword만큼 " like ? or " 첨부. 
-			for (int i=0; i<keywords.length; i++)
+			for (int i=0; i<category.length; i++)
 			{
-				String str = keywords[i] + " LIKE ? ";
-				if (i != keywords.length -1)
+				String str = category[i] + " LIKE '%'||?||'%'";
+				if (i != category.length -1)
 				{
 					str += "OR ";
 				}
@@ -192,7 +206,7 @@ public class BoardDAO {
 			// "like ?"에 파라미터 입력
 			for (int i=1; i<=count; i++)
 			{
-				psmt.setString(i, "%" + keyword + "%");
+				psmt.setString(i, keyword);
 			}
 			
 			// 한 페이지에 몇 번 게시물부터 몇 번까지 출력할지... (BETWEEN ? AND ?)
@@ -215,7 +229,6 @@ public class BoardDAO {
 				dto.setName(rs.getString("NAME"));
 				dto.setPostdate(rs.getString("postdate"));
 				dto.setVisitcount(rs.getString("visitcount"));
-				dto.setType(rs.getString("type"));
 				dto.setFileName(rs.getString("filename"));
 				dto.setSavedName(rs.getString("savedname"));
 				
@@ -232,28 +245,29 @@ public class BoardDAO {
 		return result;
 	}
 	
+	
 	public int countList(Map<String, String> info)
 	{
 		int result = 0;
-		StringBuffer sb = new StringBuffer("SELECT COUNT(*) AS COUNT FROM BOARD_INFO ");
+		StringBuffer sb = new StringBuffer("SELECT COUNT(*) AS COUNT FROM " + viewName);
 		String keyword = info.get("keyword");
 		int count = 0; // keyword 개수 세기
 		
 		if (keyword != null)
 		{
 			// where 절 설정용
-			String[] keywords = info.get("keywords").split(",");
+			String[] category = info.get("category").split(",");
 			
 			// keyword 개수 입력
-			count = keywords.length;
+			count = category.length;
 			
-			sb.append("WHERE ");
+			sb.append(" WHERE ");
 			
 			// keyword만큼 " like ? or " 첨부. 
-			for (int i=0; i<keywords.length; i++)
+			for (int i=0; i<category.length; i++)
 			{
-				String str = keywords[i] + " LIKE ? ";
-				if (i != keywords.length -1)
+				String str = category[i] + " LIKE '%'||?||'%'";
+				if (i != category.length -1)
 				{
 					str += "OR ";
 				}
@@ -267,7 +281,7 @@ public class BoardDAO {
 			// "like ?"에 파라미터 입력
 			for (int i=1; i<=count; i++)
 			{
-				psmt.setString(i, "%" + keyword + "%");
+				psmt.setString(i, keyword);
 			}
 			
 			rs = psmt.executeQuery();
@@ -277,6 +291,31 @@ public class BoardDAO {
 			
 			rs.close();
 			psmt.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	public int checkWriter(String num, String id)
+	{
+		int result = 0;
+		
+		String sql = "SELECT COUNT(*) COUNT"
+				+ " FROM "+viewName
+				+" WHERE NUM=? AND ID = ?";
+		
+		try {
+			psmt = con.prepareStatement(sql);
+			psmt.setString(1, num);
+			psmt.setString(2, id);
+			
+			rs = psmt.executeQuery();
+			
+			if (rs.next())
+				result = rs.getInt("COUNT");
 			
 		} catch (SQLException e) {
 			e.printStackTrace();

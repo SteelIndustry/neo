@@ -2,7 +2,7 @@ package model.board;
 
 
 public class BoardDTO {
-	private String num, title, content, id, postdate, visitcount, type, name, fileName, savedName;
+	private String num, title, content, id, postdate, visitcount, name, fileName, savedName;
 		
 	public String getFileName() {
 		return fileName;
@@ -75,14 +75,4 @@ public class BoardDTO {
 	public void setVisitcount(String visitcount) {
 		this.visitcount = visitcount;
 	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-	
-	
 }

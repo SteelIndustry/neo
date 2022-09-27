@@ -30,10 +30,9 @@ $(function() {
 <body>
 	<h2>게시판 - 목록 보기</h2>
 	
-	<%-- <jsp:include page="/layout/Header.jsp"/> --%>
-	
 	<!-- 검색 폼 -->
 	<form method="get" id="searchForm">
+	<input type="hidden" name="type" value="${type }" />
 	<table border="1" style="width:90%;">
 	<tr>
 		<td align="right">
@@ -70,18 +69,11 @@ $(function() {
 		<c:forEach items="${lists }" var="row" varStatus="loop">
 			<tr align="center">
 				<td>${row.num }</td>
-				<td align="left"><a href="detail.do?num=${row.num }">${row.title }</a></td>
+				<td align="left"><a href="detail.do?num=${row.num }&type=${type}">${row.title }</a></td>
 				<td>${row.name }</td>
 				<%-- <td>${map.totalCount- (((map.pageNum-1) * map.pageSize) + loop.index) }</td> --%>
 				<td>${row.visitcount }</td>
 				<td>${row.postdate }</td>
-				<%-- 
-				<td>
-				<c:if test="${ not empty row.ofile }">
-					<a href="../mvcboard/download.do?ofile=${ row.ofile }&sfile=${row.sfile}&idx=${row.idx}">[Down]</a>
-				</c:if>
-				</td>
-				--%>
 			</tr>
 		</c:forEach>
 	</c:otherwise>
@@ -91,7 +83,7 @@ $(function() {
 	<!-- 하단 메뉴(바로가기, 글쓰기) -->
 	<br />
 	<div style="width:90%;" align="right">
-		<button type="button" onclick="location.href='write.do';">글쓰기</button>
+		<button type="button" onclick="location.href='write.do?type=${type}';">글쓰기</button>
 	</div>
 	
 	<%-- 

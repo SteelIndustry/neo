@@ -68,6 +68,7 @@ $(function() {
 </head>
 <body>
 <form id="joinForm" action="joinprocess.do" method="post">
+	<input type="hidden" name="type" value="${type }"/>
 	<table>
 		<tr>
 			<th>ID</th>

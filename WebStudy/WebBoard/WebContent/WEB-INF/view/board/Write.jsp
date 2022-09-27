@@ -27,7 +27,7 @@
 <body>
 <h2>파일 첨부형 게시판 - 글쓰기(Write)</h2>
 <form name="writeFrm" method="post" enctype="multipart/form-data" 
-	action="insert.do" onsubmit="return validateForm(this);">
+	action="insert.do?type=${param.type }" onsubmit="return validateForm(this);">
 <table border="1" style="width:90%">
 	<tr>
 		<td>제목</td>
