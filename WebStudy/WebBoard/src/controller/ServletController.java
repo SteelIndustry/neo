@@ -20,6 +20,7 @@ import model.IService;
 import util.RenderingTiles;
 import util.Setting;
 import util.TableName;
+import util.XSSForMultiPart;
 
 public class ServletController extends HttpServlet {
 
@@ -50,6 +51,9 @@ public class ServletController extends HttpServlet {
 		// tiles 용
 		rendering = new RenderingTiles();
 		tilesProp = rendering.getProp();
+		
+		// multipart XSS 검사용
+		XSSForMultiPart.setAntiSamy(application.getRealPath("/WEB-INF/antisamy.xml"));
 		
 		// Properties 호출
 		// Address.properties 는 Service 클래스 주소를 담고 있음
@@ -115,6 +119,7 @@ public class ServletController extends HttpServlet {
 		// 해당 주소의 service 실행
 		String uriPath = service.execute(request, response);
 	
+		
 		// return 값에 따라 forward, redirect, 아무것도 하지 않음 결정.
 		if (uriPath.contains("redirect"))
 		{

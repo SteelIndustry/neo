@@ -23,10 +23,12 @@ public class LoginFilter implements Filter{
 		if (request.getSession(false).getAttribute("id") == null)
 		{
 			String url = request.getRequestURI().substring(request.getContextPath().length()+1);
-			String query = request.getQueryString();
+			//String query = request.getQueryString();
 			
+			/*
 			if (query != null)
 				url = url + "?" + query;
+			*/
 			
 			request.setAttribute("url", url);
 			

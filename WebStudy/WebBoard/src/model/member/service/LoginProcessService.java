@@ -14,13 +14,23 @@ public class LoginProcessService implements IService{
 		MemberDAO dao = new MemberDAO();
 		MemberDTO dto = new MemberDTO();
 		
+		// 원래 이동하려던 페이지 정보
+		String num = request.getParameter("num");
+		String type = request.getParameter("type");
+		String url = request.getParameter("url");
+		
 		dto.setId(request.getParameter("id"));
 		dto.setPassword(request.getParameter("password"));
 		dto = dao.getList(dto);
 		
-		// 원래 이동하려던 페이지가 있을 경우
-		String originalUrl = request.getParameter("url");
-		String type = request.getParameter("type");
+		System.out.println("num: " + num);
+		System.out.println("type: " + type);
+		System.out.println("url: " + url);
+		
+		// 타입은 필수 파라미터. 파라미터 미리 설정
+		String query = "?type=" + type;
+		if (num != null)
+			query+= "&num=" + num;
 		
 		// 아이디 체크 성공
 		if (dto.getName() != null )
@@ -28,29 +38,22 @@ public class LoginProcessService implements IService{
 			request.getSession().setAttribute("id", dto.getId());
 			request.getSession().setAttribute("name", dto.getName());
 			
-			String url = "redirect/";
+			String path = "redirect/";
 			
-			if (originalUrl != null)
-			{
-				url += originalUrl;
-				System.out.println("url: "+ url);
-			}
+			// 목적지 없이 그냥 로그인만 했을 경우
+			if (url == null)
+				path = path + "board.do";	
 			else
-			{
-				url = url + "board.do";
-				url += type != null ? ("?type=" + type ): ""; 
-				System.out.println("url: " + url);
-			}
-			return url;
+				path = path+url+query;
+			
+			return path;
 		}
 		request.setAttribute("errMsg", "아이디 혹은 비밀번호를 잘못 입력하였습니다.");
+		request.setAttribute("url", url);
 		
-		if (originalUrl != null)
-			request.setAttribute("url", originalUrl);
-		else
-			request.setAttribute("type", type);
+		System.out.println("로그인 오류");
 		
-		return "member/Login.jsp";
+		return "member/Login.jsp" + query;
 	}
 
 }

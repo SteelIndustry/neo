@@ -15,6 +15,7 @@ import model.board.BoardDTO;
 import util.FileUtil;
 import util.Setting;
 import util.TableName;
+import util.XSSForMultiPart;
 
 public class UpdateService implements IService {
 
@@ -22,24 +23,31 @@ public class UpdateService implements IService {
 	public String execute(HttpServletRequest request, HttpServletResponse response) {
 		String tableName; // 참조 테이블 이름
 		
+		// Multipart Request
+		String saveDir = Setting.getSaveDir();
+		MultipartRequest mr = FileUtil.uploadFile(request, saveDir, Setting.getMaxPostSize());
+		
+		// XSS 체크
+		String title = mr.getParameter("title");
+		String content = mr.getParameter("content");
+		
+		if (XSSForMultiPart.checkXSS(title) || XSSForMultiPart.checkXSS(content))
+			return "redirect/board.do";
+		
 		// 게시판 타입에 따른 테이블 이름
 		String type = request.getParameter("type") != null ? request.getParameter("type") : "free"; 
 		tableName = TableName.getTableName(type);
 		
 		// DAO 설정
 		BoardDAO dao = new BoardDAO(tableName);
-		
 		BoardDTO dto = new BoardDTO();
 		
-		String saveDir = Setting.getSaveDir();
-		
-		MultipartRequest mr = FileUtil.uploadFile(request, saveDir, Setting.getMaxPostSize());
 		
 		String prevFileName = mr.getParameter("prevFileName");
 		String preveSavedName = mr.getParameter("prevSavedName");
 		
-		dto.setTitle(mr.getParameter("title"));
-		dto.setContent(mr.getParameter("content"));
+		dto.setTitle(title);
+		dto.setContent(content);
 		dto.setNum(mr.getParameter("num"));
 		
 		String fileName = mr.getFilesystemName("fileName");

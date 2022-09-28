@@ -181,7 +181,7 @@ public class BoardDAO {
 		if (keyword != null)
 		{
 			// where 절 설정용
-			String[] category = info.get("category").split(",");
+			String[] category = info.get("category").split(","); // category = "title,content,etc" 
 			count = category.length; // 검색 키워드 존재할 경우 count에 값 부여
 			
 			sb.append("WHERE ");

@@ -13,7 +13,17 @@
 		<welcome-file>default.jsp</welcome-file>
 	</welcome-file-list>
 	
-	<!-- 상수 -->
+<!--=========================== 컨트롤러============================= -->
+	<servlet>
+		<servlet-name>WebController</servlet-name>
+		<servlet-class>controller.ServletController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>WebController</servlet-name>
+		<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
+	
+<!--=========================== 상수 =================================-->
 	<!-- 업로드 크기, 업로드 장소 -->
 	<context-param>
 		<param-name>maxPostSize</param-name>
@@ -35,6 +45,13 @@
 		<param-value>5</param-value>
 	</context-param>
 	
+<!--========================== 리스너 ================================  -->	
+	<!-- tiles -->
+	<listener>
+	    <listener-class>org.apache.tiles.extras.complete.CompleteAutoloadTilesListener</listener-class>
+	</listener>
+	
+<!--========================== filter=============================  -->	
 	<!-- 인코딩 -->
 	<filter>
 		<filter-name>SetCharEncoding</filter-name>
@@ -50,11 +67,6 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	
-	<!-- tiles -->
-	<listener>
-	    <listener-class>org.apache.tiles.extras.complete.CompleteAutoloadTilesListener</listener-class>
-	</listener>
-	
 	<!-- 로그인 요구 -->
 	<filter>
 		<filter-name>CheckLogin</filter-name>
@@ -68,7 +80,7 @@
 		<url-pattern>/delete.do</url-pattern>
 	</filter-mapping>
 	
-	<!-- 자기 글만 수정/삭제 가능 -->
+	<!-- 자기 글만 수정/삭제 가능 필터 -->
 	<filter>
 		<filter-name>CheckWriter</filter-name>
 		<filter-class>util.filter.WriterFilter</filter-class>
@@ -79,13 +91,14 @@
 		<url-pattern>/delete.do</url-pattern>
 	</filter-mapping>
 	
-	<!-- 컨트롤러 -->
-	<servlet>
-		<servlet-name>WebController</servlet-name>
-		<servlet-class>controller.ServletController</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>WebController</servlet-name>
-		<url-pattern>*.do</url-pattern>
-	</servlet-mapping>
+	<!-- naver lucy xss filter -->
+	<filter>
+		<filter-name>xssEscapeServletFilter</filter-name>
+		<filter-class>com.navercorp.lucy.security.xss.servletfilter.XssEscapeServletFilter</filter-class>
+	</filter>
+	<filter-mapping>
+	    <filter-name>xssEscapeServletFilter</filter-name>
+	    <url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
 </web-app>

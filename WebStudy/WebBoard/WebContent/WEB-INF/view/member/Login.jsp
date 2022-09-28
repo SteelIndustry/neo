@@ -31,7 +31,7 @@ $(function() {
 		
 		if (check)
 		{
-			$("#loginForm").submit();	
+			$("#loginForm").submit();
 		}
 	});
 	
@@ -43,11 +43,14 @@ $(function() {
 </head>
 <body>
 <form id="loginForm" action="loginprocess.do" method="post">
+	<c:if test="${param.type != null }">
+	<input type="hidden" name="type" value="${param.type }" />
+	</c:if>
+	<c:if test="${param.num != null }">
+	<input type="hidden" name="num" value="${param.num }"/>
+	</c:if>
 	<c:if test="${url != null }">
 	<input type="hidden" name="url" value="${url }"/>
-	</c:if>
-	<c:if test="${param.type != null }">
-	<input type="hidden" name="type" value="${param.type }"/>
 	</c:if>
 	<table>
 		<tr>
@@ -68,7 +71,7 @@ $(function() {
 		</tr>
 	</table>
 	<br />
-	<span id="errMsg" style="color: red; <c:if test="${empty errMsg }"> display: none; </c:if>" >${errMsg }</span>	
+	<span id="errMsg" style="color: red;" >${errMsg }</span>	
 </form>
 </body>
 </html>
