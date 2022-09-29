@@ -58,7 +58,11 @@ $(function() {
 				data = Number(data);
 				
 				if(data > 0) {
-					$("#errIdMsg").css('display', 'block');
+					$("#errIdMsg").css('display', 'block').html("중복된 아이디입니다.");
+				}
+				else
+				{
+					$("#errIdMsg").css('display', 'block').html("사용가능한 아이디입니다.");
 				}
 			}
 		});
@@ -67,8 +71,9 @@ $(function() {
 </script>
 </head>
 <body>
-<form id="joinForm" action="joinprocess.do" method="post">
+<form id="joinForm" action="join.do" method="post">
 	<input type="hidden" name="type" value="${type }"/>
+	<input type="hidden" name="access" value="true" />
 	<table>
 		<tr>
 			<th>ID</th>

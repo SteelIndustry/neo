@@ -2,7 +2,6 @@
     pageEncoding="UTF-8"
     trimDirectiveWhitespaces="true"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -57,11 +56,12 @@
 <body>
 <h2>게시판 - 수정하기(Edit)</h2>
 <form name="writeForm" method="post" 
-	enctype="multipart/form-data" action="update.do?type=${param.type }" 
+	enctype="multipart/form-data" action="edit.do" 
 	onsubmit="return validateForm(this);">
 
 <input type="hidden" name="num" value="${dto.num }" />
-
+<input type="hidden" name="type" value="${param.type }" />
+<input type="hidden" name="access" value="true" />
 <input type="hidden" name="prevFileName" value="${dto.fileName }" />
 <input type="hidden" name="prevSavedName" value="${dto.savedName }" />
 	

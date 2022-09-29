@@ -1,9 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%
-	
-%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -42,7 +39,8 @@ $(function() {
 </script>
 </head>
 <body>
-<form id="loginForm" action="loginprocess.do" method="post">
+<form id="loginForm" action="login.do" method="post">
+	<input type="hidden" name="access" value="true" />
 	<c:if test="${param.type != null }">
 	<input type="hidden" name="type" value="${param.type }" />
 	</c:if>

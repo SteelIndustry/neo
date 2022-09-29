@@ -17,7 +17,8 @@ $(function() {
 			return;
 		else
 		{
-			$("#searchForm").submit();
+			if ($("input[type='checkbox']:checked").length > 0)
+				$("#searchForm").submit();
 		}
 	});
 	
@@ -83,7 +84,7 @@ $(function() {
 	<!-- 하단 메뉴(바로가기, 글쓰기) -->
 	<br />
 	<div style="width:90%;" align="right">
-		<button type="button" onclick="location.href='write.do?type=${type}';">글쓰기</button>
+		<button type="button" onclick="location.href='writeform.do?type=${type}';">글쓰기</button>
 	</div>
 	
 	<%-- 

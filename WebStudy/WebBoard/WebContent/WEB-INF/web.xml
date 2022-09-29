@@ -20,7 +20,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>WebController</servlet-name>
-		<url-pattern>*.do</url-pattern>
+		<url-pattern>/</url-pattern>
 	</servlet-mapping>
 	
 <!--=========================== 상수 =================================-->
@@ -75,9 +75,19 @@
 	<filter-mapping>
 		<filter-name>CheckLogin</filter-name>
 		<url-pattern>/detail.do</url-pattern>
-		<url-pattern>/write.do</url-pattern>
-		<url-pattern>/edit.do</url-pattern>
-		<url-pattern>/delete.do</url-pattern>
+		<url-pattern>/writeform.do</url-pattern>
+	</filter-mapping>
+	
+	<!-- 비정상 접근 원천 차단 -->
+	<filter>
+		<filter-name>Prohibition</filter-name>
+		<filter-class>util.filter.ProhibitionFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>Prohibition</filter-name>
+		<url-pattern>/login.do</url-pattern>
+		<url-pattern>/join.do</url-pattern>
+		<url-pattern>/delete.do</url-pattern>		
 	</filter-mapping>
 	
 	<!-- 자기 글만 수정/삭제 가능 필터 -->
@@ -87,8 +97,18 @@
 	</filter>
 	<filter-mapping>
 		<filter-name>CheckWriter</filter-name>
-		<url-pattern>/edit.do</url-pattern>
-		<url-pattern>/delete.do</url-pattern>
+		<url-pattern>/editform.do</url-pattern>
+	</filter-mapping>
+	
+	<!-- 로그인 페이지, 로그인 과정 중복 요청 방지 -->
+	<filter>
+		<filter-name>LoginDupli</filter-name>
+		<filter-class>util.filter.LoginDuplicatedFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>LoginDupli</filter-name>
+		<url-pattern>/loginform.do</url-pattern>
+		<url-pattern>/joinform.do</url-pattern>		
 	</filter-mapping>
 	
 	<!-- naver lucy xss filter -->

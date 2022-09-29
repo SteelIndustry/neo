@@ -56,7 +56,9 @@ function checkFile()
 <body>
 <h2>파일 첨부형 게시판 - 글쓰기(Write)</h2>
 <form id="writeForm" method="post" enctype="multipart/form-data" 
-	action="insert.do?type=${param.type }" onsubmit="return validateForm(this);">
+	action="write.do" onsubmit="return validateForm(this);">
+<input type="hidden" name="access" value="true" />
+<input type="hidden" name="type" value="${param.type }" />
 <table border="1" style="width:90%">
 	<tr>
 		<td>제목</td>

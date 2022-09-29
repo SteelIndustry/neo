@@ -6,6 +6,21 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+<script type="text/javascript">
+$(function() {
+	$("#editBtn").on("click", function() {
+		$("#editForm").attr("action", "editform.do");
+		$("#editForm").submit();
+	});
+	
+	$("#deleteBtn").on("click", function() {
+		$("#editForm").attr("action", "delete.do");
+		$("#editForm").submit();
+	});
+});
+</script>
+
 <title>상세 보기(Detail)</title>
 </head>
 <body>
@@ -55,8 +70,13 @@
 	<tr>
 		<td colspan="4" align="center">
 			<c:if test="${dto.id == sessionScope.id }">
-			<button type="button" onclick="location.href='edit.do?num=${param.num}&type=${param.type }';">수정하기</button>
-			<button type="button" onclick="location.href='delete.do?num=${param.num}&type=${param.type }';">삭제하기</button>
+			<form id="editForm" action="" method="post">
+				<input type="hidden" name="num" value="${param.num }" />
+				<input type="hidden" name="type" value="${param.type }" />
+				<input type="hidden" name="access" value="true" />				
+				<button id="editBtn" type="button">수정하기</button>
+				<button id="deleteBtn" type="button">삭제하기</button>
+			</form>
 			</c:if>
 			<button type="button" onclick="location.href='board.do?type=${param.type}';">목록 바로가기</button>
 		</td>

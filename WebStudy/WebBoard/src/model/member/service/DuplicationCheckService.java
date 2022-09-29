@@ -12,7 +12,6 @@ public class DuplicationCheckService implements IService{
 
 	@Override
 	public String execute(HttpServletRequest request, HttpServletResponse response) {
-		
 		MemberDAO dao = new MemberDAO();
 		
 		String result = dao.getList(request.getParameter("id"));

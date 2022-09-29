@@ -32,7 +32,7 @@ public class LoginFilter implements Filter{
 			
 			request.setAttribute("url", url);
 			
-			RequestDispatcher dispatcher = request.getRequestDispatcher("login.do");
+			RequestDispatcher dispatcher = request.getRequestDispatcher("loginform.do");
 			dispatcher.forward((ServletRequest) request, (ServletResponse) response);
 			
 		}

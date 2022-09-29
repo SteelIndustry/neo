@@ -12,9 +12,9 @@
 	<td align="right">
 	<c:choose>
 		<c:when test="${sessionScope.name == null }">
-			<a class="nonmember" href="login.do
+			<a class="nonmember" href="loginform.do
 			<c:if test="${type != null}">?type=${type }</c:if>">로그인</a>	
-			<a class="nonmember" href="join.do
+			<a class="nonmember" href="joinform.do
 			<c:if test="${type != null}">?type=${type }</c:if>">회원가입</a>	
 		</c:when>
 		<c:otherwise>
