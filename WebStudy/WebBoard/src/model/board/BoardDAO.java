@@ -162,59 +162,51 @@ public class BoardDAO {
 	}
 	
 	
-	public List<BoardDTO> getList(Map<String, String> info)
+	public List<BoardDTO> getList(Map<String, String> searchMap, Map<String, String> infoMap)
 	{
 		List<BoardDTO> result = new ArrayList<BoardDTO>();
+		String[] category = null; // 검색 조건
 		
-		String keyword = info.get("keyword");
-		int count = 0; // 파라미터 count 용
+		StringBuffer sb = new StringBuffer(
+				"SELECT NUM, TITLE, CONTENT, ID, NAME, POSTDATE, VISITCOUNT"
+				+ ", FILENAME, SAVEDNAME"
+				+ " FROM ( SELECT BI.*, ROW_NUMBER() OVER(ORDER BY NUM DESC) RN"
+						+ " FROM " + viewName + " BI ");
 		
-		String sql = "SELECT NUM, TITLE, CONTENT, ID, NAME, POSTDATE, VISITCOUNT"
-				        + ", FILENAME, SAVEDNAME"
-				  + " FROM"
-				  + " ( SELECT BI.*, ROW_NUMBER() OVER(ORDER BY NUM DESC) RN "
-				    + " FROM "+viewName+" BI ";
-		
-		StringBuffer sb = new StringBuffer();
-		sb.append(sql);
-		
-		if (keyword != null)
+		if (infoMap.get("category") != null)
 		{
-			// where 절 설정용
-			String[] category = info.get("category").split(","); // category = "title,content,etc" 
-			count = category.length; // 검색 키워드 존재할 경우 count에 값 부여
+			category = infoMap.get("category").split(",");
+			int count = category.length;
 			
-			sb.append("WHERE ");
-			
-			// keyword만큼 " like ? or " 첨부. 
-			for (int i=0; i<category.length; i++)
+			// WHERE 절 설정용
+			sb.append(" WHERE ");
+			for (int i=0; i<count; i++)
 			{
-				String str = category[i] + " LIKE '%'||?||'%'";
-				if (i != category.length -1)
-				{
-					str += "OR ";
-				}
-				sb.append(str);
+				sb.append(category[i]);
+        		sb.append(" LIKE '%'||?||'%' ");
+				if (i != count-1)
+					sb.append("AND ");
 			}
 		}
-		
 		sb.append(") WHERE RN BETWEEN ? AND ?");
 		
 		try {
 			psmt = con.prepareStatement(sb.toString());
 			
 			// "like ?"에 파라미터 입력
-			for (int i=1; i<=count; i++)
+			int i = 1; // 파라미터 인덱스
+			
+			if (category != null)
 			{
-				psmt.setString(i, keyword);
+				for (String c : category)
+					psmt.setString(i++, searchMap.get(c));				
 			}
 			
 			// 한 페이지에 몇 번 게시물부터 몇 번까지 출력할지... (BETWEEN ? AND ?)
 			// keyword 없었을 경우 1번부터
 			// keyword 있었을 경우 like 파라미터 이후 번호부터 파라미터 입력 
-			count = keyword != null ? count+1 : 1;
-			psmt.setString(count++, info.get("start"));
-			psmt.setString(count, info.get("end"));
+			psmt.setString(i++, infoMap.get("start"));
+			psmt.setString(i, infoMap.get("end"));
 			
 			rs = psmt.executeQuery();
 			
@@ -234,7 +226,6 @@ public class BoardDAO {
 				
 				result.add(dto);
 			}
-			
 			rs.close();
 			psmt.close();
 			
@@ -246,32 +237,25 @@ public class BoardDAO {
 	}
 	
 	
-	public int countList(Map<String, String> info)
+	public int countList(Map<String, String> searchMap, Map<String, String> infoMap)
 	{
 		int result = 0;
-		StringBuffer sb = new StringBuffer("SELECT COUNT(*) AS COUNT FROM " + viewName);
-		String keyword = info.get("keyword");
-		int count = 0; // keyword 개수 세기
+		String[] category = null; // 검색 조건
+		StringBuffer sb = new StringBuffer("SELECT COUNT(*) COUNT FROM " + viewName);
 		
-		if (keyword != null)
+		if (infoMap.get("category") != null)
 		{
-			// where 절 설정용
-			String[] category = info.get("category").split(",");
+			category = infoMap.get("category").split(",");
+			int count = category.length;
 			
-			// keyword 개수 입력
-			count = category.length;
-			
+			// WHERE 절 설정용
 			sb.append(" WHERE ");
-			
-			// keyword만큼 " like ? or " 첨부. 
-			for (int i=0; i<category.length; i++)
+			for (int i=0; i<count; i++)
 			{
-				String str = category[i] + " LIKE '%'||?||'%'";
-				if (i != category.length -1)
-				{
-					str += "OR ";
-				}
-				sb.append(str);
+				sb.append(category[i]);
+        		sb.append(" LIKE '%'||?||'%' ");
+				if (i != count-1)
+					sb.append("AND ");
 			}
 		}
 		
@@ -279,11 +263,13 @@ public class BoardDAO {
 			psmt = con.prepareStatement(sb.toString());
 			
 			// "like ?"에 파라미터 입력
-			for (int i=1; i<=count; i++)
+			if (category != null)
 			{
-				psmt.setString(i, keyword);
+				int i = 1;
+				for (String c : category)
+					psmt.setString(i++, searchMap.get(c));				
 			}
-			
+
 			rs = psmt.executeQuery();
 			
 			if (rs.next())
@@ -295,7 +281,6 @@ public class BoardDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
 		return result;
 	}
 	

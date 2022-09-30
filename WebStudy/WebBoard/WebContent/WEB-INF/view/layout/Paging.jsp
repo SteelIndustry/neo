@@ -13,10 +13,13 @@
 <tr align="center"><td>
 
 <c:if test="${paging['startPage'] != 1 }">
-	<a href="board.do?pageNum=1${query }">첫 페이지</a>
+	<a href="board.do?pageNum=1&type=${type }
+		<c:if test="${query != null }">&search=search${query }</c:if>
+	">첫 페이지</a>
 	&nbsp;
-	<a href="board.do?pageNum=${paging['prevBlock']}
-	${query }">이전 블록</a>	
+	<a href="board.do?pageNum=${paging['prevBlock']}&type=${type }
+		<c:if test="${query != null }">&search=search${query }</c:if>
+	">이전 블록</a>	
 </c:if>
 <c:forEach var="i" begin="${paging['startPage'] }" end="${ paging['endPage']}">
 	&nbsp;
@@ -26,17 +29,19 @@
 		</c:when>
 		<c:otherwise>
 			<a href="board.do?pageNum=${i }&type=${type }
-				${query }
+				<c:if test="${query != null }">&search=search${query }</c:if>
 			">${i }</a>
 		</c:otherwise>
 	</c:choose>
 </c:forEach>
 <c:if test="${paging['endPage'] != paging['lastPage'] }">
-	<a href="board.do?pageNum=${paging['nextBlock']}
-	${query }">다음 블록</a>
+	<a href="board.do?pageNum=${paging['nextBlock']}&type=${type }
+		<c:if test="${query != null }">&search=search${query }</c:if>
+	">다음 블록</a>
 	&nbsp;
-	<a href="board.do?pageNum=${paging['lastPage']}
-	${query }">마지막 페이지</a>	
+	<a href="board.do?pageNum=${paging['lastPage']}&type=${type }
+		<c:if test="${query != null }">&search=search${query }</c:if>
+	">마지막 페이지</a>	
 </c:if>
 		
 </td></tr>

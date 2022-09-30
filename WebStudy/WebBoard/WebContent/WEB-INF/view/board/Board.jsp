@@ -13,12 +13,30 @@
 <script>
 $(function() {
 	$("#searchBtn").on("click", function() {
-		if ( $("input[name='keyword']").val().trim() == '')
+		
+		$("input").remove(".formTag");
+		
+		var title = $("#title").val().trim();
+		var content = $("#content").val().trim();
+		
+		if ( title == '' && content == '')
 			return;
 		else
 		{
-			if ($("input[type='checkbox']:checked").length > 0)
-				$("#searchForm").submit();
+			var form = $("#searchForm");
+			
+			if (title != '')
+			{
+				var tagStr = "<input type='hidden' class='formTag' name='title' value='"+title+"'/>"
+				form.append(tagStr);
+			}
+			if (content != '')
+			{
+				var tagStr = "<input type='hidden' class='formTag' name='content' value='"+content+"'/>"
+				form.append(tagStr);
+			}
+			
+			form.submit();
 		}
 	});
 	
@@ -26,29 +44,31 @@ $(function() {
 		location.href="board.do";
 	});
 	
-})</script>
+});
+</script>
 </head>
 <body>
 	<h2>게시판 - 목록 보기</h2>
 	
 	<!-- 검색 폼 -->
 	<form method="get" id="searchForm">
-	<input type="hidden" name="type" value="${type }" />
+		<input type="hidden" name="type" value="${type }" />
+		<input type="hidden" name="search" value="search"/>
+	</form>
+	
 	<table border="1" style="width:90%;">
 	<tr>
 		<td align="right">
 			<button id="resetBtn" type="button">검색 초기화</button>		
-			<label><input type="checkbox" name="title" value="title"
-				   <c:if test="${param.title != null}">checked</c:if>/>제목</label>
-			<label><input type="checkbox" name="content" value="content"
-				   <c:if test="${param.content != null}">checked="checked"</c:if>/>내용</label>
-			<input type="text" name="keyword"
-				<c:if test="${param.keyword != null}">value="${param.keyword }"</c:if>/>
+			<label>제목 <input type="text" id="title" maxlength="20"
+				value="<c:if test="${param.title != null}">${param.title }</c:if>"/></label>
+			<label>내용 <input type="text" id="content" maxlength="20"
+				value="<c:if test="${param.content != null}">${param.content }</c:if>"/></label>
 			<button id="searchBtn" type="button">검색하기</button>
 		</td>
 	</tr>
 	</table>
-	</form>
+	
 	
 	<!-- 목록 테이블 -->
 	<table border="1" style="width:90%;">
@@ -86,15 +106,5 @@ $(function() {
 	<div style="width:90%;" align="right">
 		<button type="button" onclick="location.href='writeform.do?type=${type}';">글쓰기</button>
 	</div>
-	
-	<%-- 
-	<table border="1" style="width:90%;">
-		<tr align="center">
-			<td><jsp:include page="/layout/Paging.jsp"/></td>
-			<td style="width:100;">
-				
-			</td>
-		</tr>
-	</table> --%>
 </body>
 </html>
