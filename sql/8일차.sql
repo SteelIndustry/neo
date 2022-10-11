@@ -24,15 +24,11 @@ HAVING COUNT(*) > 1
 ORDER  BY HIREDATE; 
 
 -- 4¹ø
-SELECT T.DNAME,
-       COUNT(*)   AS CNT,
-       SUM(T.SAL) AS SAL
-FROM   (SELECT E.*,
-               NVL(D.DNAME, 'NO DEPT') AS DNAME
-        FROM   EMP E
-               LEFT OUTER JOIN DEPT D
-                            ON E.DEPTNO = D.DEPTNO) T
-GROUP  BY T.DNAME;
+SELECT NVL(D.DNAME, 'NO DEPT') DNAME
+     , COUNT(*) CNT
+     , SUM(E.SAL)
+FROM EMP E LEFT JOIN DEPT D ON E.DEPTNO = D.DEPTNO
+GROUP BY D.DNAME;
 
 -- 5¹ø
 SELECT T1.MM,
