@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:mvc="http://www.springframework.org/schema/mvc" 
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc 
+						https://www.springframework.org/schema/mvc/spring-mvc.xsd
+        				http://www.springframework.org/schema/beans 
+        				https://www.springframework.org/schema/beans/spring-beans.xsd
+        				http://www.springframework.org/schema/context 
+        				https://www.springframework.org/schema/context/spring-context.xsd">
+	<mvc:annotation-driven/>
+	<context:component-scan base-package="com.chart"/>
+	
+	<mvc:resources mapping="/resources/**" location="/resources/" />
+	
+	<!-- ViewResolver 설정 및 Bean 등록 -->
+	<bean	class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/view/" />
+		<property name="suffix" value=".jsp" />
+		<property name="order" value="2"/>
+	</bean>
+	
+	<!-- tiles view resolver  -->
+	<bean id="tilesViewResolver" 
+		class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView" />
+    	<property name="order" value="1" />
+	</bean>
+	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+	    <property name="definitions">
+	        <list>
+	            <value>/WEB-INF/spring/tiles-define.xml</value>
+	        </list>
+	    </property>
+	</bean>
+	
+	<!-- MariaDB JDBC DataSource -->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+        <property name="driverClass" value="org.mariadb.jdbc.Driver"/>
+        <property name="url" value="jdbc:mariadb://localhost:3306/final" />
+        <property name="username" value="root" />
+        <property name="password" value="1234" />
+    </bean>
+	
+	<!-- mybatis -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="configLocation" value="classpath:/mybatis-config.xml"/>
+		<property name="mapperLocations" value="classpath:/mappers/*DAO.xml"/>
+	</bean>
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory"></constructor-arg>
+    </bean>
+</beans>
