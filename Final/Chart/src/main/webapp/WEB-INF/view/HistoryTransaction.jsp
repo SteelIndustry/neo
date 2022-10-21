@@ -14,28 +14,33 @@
 	
 	<tr>
 		<th>종목번호</th>
-		<th>총수량</th>
-	</tr>
-	
-	<c:forEach var="i" items="${total }">
-	<tr>
-		<th>${i.itemCode }</th>
-		<td>${i.total }</td>
-	</tr>
-	</c:forEach>
-	<%-- 
-	<tr>
-		<td>&nbsp;</td>
-		<c:forEach var="i" items="${result}">
-			<th>${i.id }</th>
+		<c:forEach var="i" items="${idList }">
+		<th>${i.idAccount }</th>
 		</c:forEach>
+		<th>총수량</th>
+		<th>현재가</th>
+		<th>갱신일</th>
 	</tr>
-	<c:forEach var="i" items="${result}">
-		<tr>
-			<td>${i.itemCode }</td>
-		</tr>
+	<c:forEach var="item" items="${total }">
+	<tr>
+		<th>${item.itemCode }</th>
+		<c:forEach var="id" items="${idList }">
+		<td>
+			<c:forEach var="row" items="${transaction }">
+				<c:choose>
+				<c:when test="${item.itemCode == row.itemCode && row.idAccount == id.idAccount }">
+					${row.unsettled }
+				</c:when>
+				<c:otherwise></c:otherwise>
+				</c:choose>
+			</c:forEach>
+		</td>
+		</c:forEach>
+		<td>${item.total }</td>
+		<td>${item.currPrice }</td>
+		<td>${item.updateTime }</td>
+	</tr>
 	</c:forEach>
-	--%>
 </table>
 </body>
 </html>

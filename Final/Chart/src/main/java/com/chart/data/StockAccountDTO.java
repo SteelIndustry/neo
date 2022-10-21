@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class StockAccountDTO {
 	
-	private String accountNum, itemCode, buySell, valProfitLoss, updateTime, id;
+	private String accountNum, itemCode, buySell, valProfitLoss, updateTime, id, idAccount;
 	private int unsettled, total;
 	private double avgPrice, currPrice;
 }

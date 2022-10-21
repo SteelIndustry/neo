@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chart.data.IStaticChartDAO">
+	<select id="getStaticList" resultType="com.chart.data.StaticChartDTO">
+		SELECT CONCAT(SUBSTR(UNIX_TIMESTAMP(DATE), 1, 10), '000') DATE, OPEN, high, low, close 
+		FROM static_chart 
+		WHERE name = '309AN280' ORDER BY DATE
+	</select>
+</mapper>

@@ -31,12 +31,14 @@ public class TransactionHistoryServiceImpl implements ITransactionHistoryService
 	public void getList(Model model) {
 		IStockAccountDAO dao = sqlSession.getMapper(IStockAccountDAO.class);
 		
-		List<StockAccountDTO> result = dao.getList();
-		
-		model.addAttribute("result", result);
-		
+		//List<StockAccountDTO> result = dao.getList();
 		List<StockAccountDTO> total = dao.getTotal();
+		List<StockAccountDTO> idList = dao.getIdAccount();
+		List<StockAccountDTO> transaction = dao.getTransaction();
 		
+		//model.addAttribute("result", result);
 		model.addAttribute("total", total);
+		model.addAttribute("idList", idList);
+		model.addAttribute("transaction", transaction);
 	}
 }
