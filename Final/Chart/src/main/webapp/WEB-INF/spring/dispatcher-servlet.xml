@@ -3,23 +3,27 @@
 	xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:websocket="http://www.springframework.org/schema/websocket"
 	xsi:schemaLocation="http://www.springframework.org/schema/mvc 
 						https://www.springframework.org/schema/mvc/spring-mvc.xsd
         				http://www.springframework.org/schema/beans 
         				https://www.springframework.org/schema/beans/spring-beans.xsd
         				http://www.springframework.org/schema/context 
-        				https://www.springframework.org/schema/context/spring-context.xsd">
+        				https://www.springframework.org/schema/context/spring-context.xsd
+        				http://www.springframework.org/schema/websocket
+        				https://www.springframework.org/schema/websocket/spring-websocket.xsd">
 	<mvc:annotation-driven/>
 	<context:component-scan base-package="com.chart"/>
 	
 	<mvc:resources mapping="/resources/**" location="/resources/" />
 	
 	<!-- ViewResolver 설정 및 Bean 등록 -->
-	<bean	class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/WEB-INF/view/" />
 		<property name="suffix" value=".jsp" />
 		<property name="order" value="2"/>
 	</bean>
+	
 	
 	<!-- tiles view resolver  -->
 	<bean id="tilesViewResolver" 
@@ -38,7 +42,7 @@
 	<!-- MariaDB JDBC DataSource -->
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
         <property name="driverClass" value="org.mariadb.jdbc.Driver"/>
-        <property name="url" value="jdbc:mariadb://localhost:3306/final" />
+        <property name="url" value="jdbc:mariadb://localhost:3307/final" />
         <property name="username" value="root" />
         <property name="password" value="1234" />
     </bean>
@@ -52,4 +56,15 @@
 	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
         <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory"></constructor-arg>
     </bean>
+    
+    <!-- websocket handler -->
+    <websocket:handlers>
+		<websocket:mapping handler="myWebsocketHandler" path="/ws"/>
+		<websocket:handshake-interceptors>
+			<bean class="org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor"/>
+		</websocket:handshake-interceptors>
+		<!-- <websocket:sockjs></websocket:sockjs> -->
+	</websocket:handlers>
+	
+	<bean id="myWebsocketHandler" class="com.chart.current.handler.MyWebSocketHandler"/>
 </beans>

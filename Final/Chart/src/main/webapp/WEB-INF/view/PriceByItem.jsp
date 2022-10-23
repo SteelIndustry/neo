@@ -49,6 +49,5 @@ window.onload = function() {
 </head>
 <body>
 	<div id="container"></div>
-	${result }
 </body>
 </html>

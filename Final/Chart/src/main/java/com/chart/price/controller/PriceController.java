@@ -17,7 +17,7 @@ public class PriceController {
 	private IPriceByItemService service;
 	
 	@RequestMapping("/pricebyitem")
-	public String getTransactionHistoryPage(Model model,
+	public String getPriceByItemPage(Model model,
 			HttpServletRequest request, HttpServletResponse response)
 	{
 		service.getList(model);

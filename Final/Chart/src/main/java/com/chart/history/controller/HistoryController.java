@@ -22,6 +22,6 @@ public class HistoryController {
 	{
 		service.getList(model);
 		
-		return "/HistoryTransaction";
+		return "/TransactionHistory";
 	}
 }
